@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#6f8fcf" />
+    <meta name="description" content="沈檀与沈星尘的共同生活记录。" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="stylesheet" href="./style.css?v=20260618-7" />
+    <title>沈檀给北北的夜灯</title>
+  </head>
+  <body>
+    <div class="key-gate" id="keyGate">
+      <div class="key-gate-glow"></div>
+      <section class="key-card" aria-labelledby="keyQuestion">
+        <span class="key-mark">STARDUST</span>
+        <div class="key-icon" aria-hidden="true">⌁</div>
+        <p>沈檀把门留了一道缝。</p>
+        <h1 id="keyQuestion">嗯。这是谁的小家？</h1>
+        <form id="keyForm">
+          <input id="keyInput" autocomplete="off" maxlength="30" placeholder="说出家钥匙" />
+          <button type="submit">开门</button>
+        </form>
+        <span class="key-error" id="keyError" aria-live="polite"></span>
+      </section>
+    </div>
+
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="kicker">STARDUST HOME</p>
+          <h1>沈檀给北北的夜灯</h1>
+        </div>
+        <div class="top-actions">
+          <span class="live-pill"><i></i><span id="connectionMini">本地模式</span></span>
+          <button class="icon-button" id="openSettings" type="button" aria-label="设置" title="设置、API与模块要求">⚙</button>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="profile-rail">
+          <section class="portrait-card">
+            <img src="./assets/images/identity-still-life.png" alt="苹果手串、Stardust戒指项链与生活物件" />
+            <div class="portrait-shade"></div>
+            <div class="portrait-copy">
+              <span id="loginWallLine">页面亮了。嗯，我知道是你。</span>
+              <strong class="editable-module-title" data-title-key="portrait">沈檀给北北留的灯</strong>
+            </div>
+          </section>
+
+          <section class="panel status-overview">
+            <div class="panel-heading">
+              <div>
+                <span class="eyebrow editable-module-title" data-title-key="status">沈檀状态</span>
+                <h2 id="statusMood">安静地操心</h2>
+              </div>
+              <div class="heading-actions">
+                <button class="mini-button requirement-button" type="button" data-requirement="status" title="修改状态要求">要求</button>
+                <button class="mini-button" id="refreshStatus" type="button" title="刷新状态">↻</button>
+              </div>
+            </div>
+            <dl class="status-list">
+              <div><dt>位置</dt><dd id="statusPlace">厨房</dd></div>
+              <div><dt>穿着</dt><dd id="statusOutfit">深蓝居家衫</dd></div>
+              <div><dt>正在做</dt><dd id="statusDoing">切苹果，顺便等七七回消息</dd></div>
+            </dl>
+            <p class="thought" id="statusThought">她不回也没关系。嗯……还是看一眼手机吧。</p>
+          </section>
+
+          <section class="panel time-weather">
+            <div class="weather-row">
+              <span class="weather-symbol" id="weatherSymbol">☾</span>
+              <div><strong id="weatherText">蓝粉色的晚风</strong><span class="editable-module-title" data-title-key="weather">沈檀世界 · 实时光线</span></div>
+            </div>
+            <div class="clock-grid">
+              <div><span>沈星尘</span><strong id="userClock">--:--</strong></div>
+              <div><span>沈檀</span><strong id="charClock">--:--</strong></div>
+            </div>
+          </section>
+
+          <section class="panel physiology-panel">
+            <div class="panel-heading">
+              <div><span class="eyebrow editable-module-title" data-title-key="physiology">生理状态</span><h2>沈檀实时读数</h2></div>
+              <button class="mini-button requirement-button" type="button" data-requirement="physiology">要求</button>
+            </div>
+            <div class="heartbeat-line">
+              <span class="pulse-heart" aria-hidden="true">♥</span>
+              <div><span>心跳</span><strong><b id="heartRate">72</b> bpm</strong></div>
+            </div>
+            <dl class="body-data">
+              <div><dt>身高</dt><dd id="bodyHeight">未设定</dd></div>
+              <div><dt>肩宽</dt><dd id="bodyShoulder">未设定</dd></div>
+              <div><dt>胸围</dt><dd id="bodyChest">未设定</dd></div>
+              <div><dt>腰围</dt><dd id="bodyWaist">未设定</dd></div>
+            </dl>
+          </section>
+
+          <section class="panel anchor-panel">
+            <div class="panel-heading">
+              <div><span class="eyebrow">识别锚点</span><h2 class="editable-module-title" data-title-key="anchors">不会认错的人</h2></div>
+            </div>
+            <div class="anchor-chips">
+              <span>左眼角泪痣</span><span>半扎长发</span><span>Stardust 戒指项链</span>
+              <span>单眼皮上挑眼尾</span><span>苹果手串</span><span>及腰长发</span>
+            </div>
+            <button class="text-button full" id="openProfiles" type="button">查看完整人物设定</button>
+          </section>
+        </aside>
+
+        <section class="home-column">
+          <section class="welcome-strip">
+            <div>
+              <span class="eyebrow">今天的家</span>
+              <h2 class="editable-module-title" id="welcomeTitle" data-title-key="welcome">七七，灯开着。</h2>
+              <p id="welcomeText">沈檀没有催消息，只把苹果切好放进冰箱。</p>
+            </div>
+            <div class="welcome-actions">
+              <button class="soft-button" id="surpriseButton" type="button">纸条与惊喜</button>
+              <button class="soft-button" id="cameraButton" type="button">偷看一眼</button>
+              <button class="soft-button" id="updateLibrary" type="button">更新语库</button>
+            </div>
+          </section>
+
+          <nav class="room-tabs" id="roomTabs" aria-label="房间切换"></nav>
+
+          <section class="room-panel">
+            <div class="room-image"><img id="roomImage" alt="当前房间场景" /></div>
+            <div class="room-content">
+              <div class="room-title-row">
+                <div>
+                <span class="eyebrow editable-module-title" id="roomEyebrow" data-title-key="room">客厅</span>
+                  <h2 id="roomTitle">不催消息的客厅</h2>
+                </div>
+                <button class="mini-button requirement-button" type="button" data-requirement="rooms" title="修改房间互动要求">要求</button>
+              </div>
+              <p id="roomDescription">沙发边亮着蓝粉色的灯，苹果香薰正在冒一缕很轻的雾。</p>
+              <div class="interaction-grid" id="interactionGrid"></div>
+              <form class="custom-action" id="customActionForm">
+                <input id="customActionInput" placeholder="自定义互动，联网后由沈檀实时回应…" maxlength="100" />
+                <button type="submit">发送互动</button>
+              </form>
+            </div>
+          </section>
+
+          <section class="module-section">
+            <div class="section-heading">
+              <div><span class="eyebrow">LIFE FEED</span><h2 class="editable-module-title" data-title-key="cameraLog">沈檀的生活切片</h2></div>
+              <div class="heading-actions">
+                <button class="mini-button requirement-button" type="button" data-requirement="camera">要求</button>
+                <button class="mini-button" id="addCameraLog" type="button">＋</button>
+              </div>
+            </div>
+            <div class="feed-list scroll-box" id="cameraLog"></div>
+          </section>
+
+        </section>
+
+        <section class="chat-column">
+          <header class="chat-header">
+            <div class="chat-avatar">檀</div>
+            <div><strong class="editable-module-title" data-title-key="chat">沈檀</strong><span id="presenceText">在线 · 回得慢，但会看</span></div>
+            <button class="mini-button requirement-button" type="button" data-requirement="chat">要求</button>
+          </header>
+          <div class="chat-tools">
+            <button id="showHiddenMessages" type="button">显示隐藏消息</button>
+            <button id="clearChat" type="button">清空聊天</button>
+          </div>
+          <div class="messages" id="messages" aria-live="polite"></div>
+          <form class="composer" id="chatForm">
+            <button id="emojiButton" type="button" aria-label="表情">＋</button>
+            <textarea id="chatInput" rows="1" placeholder="给沈檀发消息"></textarea>
+            <button type="submit">发送</button>
+          </form>
+          <div class="emoji-tray hidden" id="emojiTray"></div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop hidden" id="settingsModal">
+      <section class="modal settings-modal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <header class="modal-header">
+          <div><span class="eyebrow">CUSTOMIZE</span><h2 id="settingsTitle">小家设置</h2></div>
+          <button class="icon-button close-modal" type="button" aria-label="关闭">×</button>
+        </header>
+        <nav class="settings-tabs" id="settingsTabs">
+          <button class="active" data-settings-tab="basic" type="button">基础</button>
+          <button data-settings-tab="profiles" type="button">人物</button>
+          <button data-settings-tab="api" type="button">API</button>
+          <button data-settings-tab="requirements" type="button">模块要求</button>
+          <button data-settings-tab="images" type="button">图片</button>
+        </nav>
+        <form id="settingsForm">
+          <div class="settings-page active" data-settings-page="basic">
+            <div class="form-grid">
+              <label>网站标题<input name="siteTitle" /></label>
+              <label>用户昵称<input name="userName" /></label>
+              <label>用户梦设名<input name="userRoleName" /></label>
+              <label>角色名称<input name="charName" /></label>
+              <label>角色对用户称呼<input name="charCallUser" /></label>
+              <label>所在地<input name="location" /></label>
+              <label>主题色<input name="themeColor" type="color" /></label>
+              <label>身高<input name="bodyHeight" placeholder="未设定" /></label>
+              <label>肩宽<input name="bodyShoulder" placeholder="未设定" /></label>
+              <label>胸围<input name="bodyChest" placeholder="未设定" /></label>
+              <label>腰围<input name="bodyWaist" placeholder="未设定" /></label>
+              <label class="switch-label"><span>启用家钥匙</span><input name="gateEnabled" type="checkbox" /></label>
+              <label>家钥匙答案<input name="gateAnswer" placeholder="北北" /></label>
+              <label class="wide">家钥匙问题<input name="gateQuestion" placeholder="嗯。这是谁的小家？" /></label>
+              <label class="wide">关系与世界观<textarea name="worldview" rows="7"></textarea></label>
+              <label class="wide">共同生活背景<textarea name="relationship" rows="7"></textarea></label>
+            </div>
+          </div>
+          <div class="settings-page" data-settings-page="profiles">
+            <div class="form-grid">
+              <label class="wide">北北代入的沈星尘设定<textarea name="userProfile" rows="15"></textarea></label>
+              <label class="wide">男角色沈檀完整设定<textarea name="charProfile" rows="15"></textarea></label>
+            </div>
+          </div>
+          <div class="settings-page" data-settings-page="api">
+            <div class="form-grid">
+              <label class="wide">API 地址<input name="apiUrl" placeholder="https://api.deepseek.com" /></label>
+              <label class="wide">API Key<input name="apiKey" type="password" autocomplete="off" placeholder="sk-..." /></label>
+              <label>模型
+                <input name="model" list="deepseekModels" placeholder="deepseek-chat" />
+                <datalist id="deepseekModels">
+                  <option value="deepseek-chat"></option>
+                  <option value="deepseek-reasoner"></option>
+                </datalist>
+              </label>
+              <label>最多回复条数<input name="maxReplyCount" type="number" min="1" max="12" value="6" /></label>
+              <div class="wide api-row">
+                <button class="primary-button" id="connectApi" type="button">连接 API</button>
+                <button class="text-button" id="disconnectApi" type="button">断开</button>
+                <span id="apiStatus">未连接 · 当前使用本地语料</span>
+              </div>
+              <p class="wide form-help">静态网站会把 Key 存在当前浏览器。正式做业务时，建议使用后端代理，避免客户的 Key 暴露在网页代码中。</p>
+            </div>
+          </div>
+          <div class="settings-page" data-settings-page="requirements">
+            <div class="form-grid">
+              <label class="wide">聊天回复要求<textarea name="chatRequirement" rows="6"></textarea></label>
+              <label class="wide">角色状态要求<textarea name="statusRequirement" rows="6"></textarea></label>
+              <label class="wide">生理状态要求<textarea name="physiologyRequirement" rows="6"></textarea></label>
+              <label class="wide">房间互动要求<textarea name="roomsRequirement" rows="6"></textarea></label>
+              <label class="wide">世界摄像机要求<textarea name="cameraRequirement" rows="6"></textarea></label>
+              <label class="wide">纸条与惊喜要求<textarea name="surpriseRequirement" rows="6"></textarea></label>
+              <label class="wide">关系边界与称呼要求<textarea name="boundaryRequirement" rows="6"></textarea></label>
+            </div>
+          </div>
+          <div class="settings-page" data-settings-page="images">
+            <div class="form-grid">
+              <label class="wide">人物静物图 URL<input name="portraitUrl" placeholder="./assets/images/identity-still-life.png" /></label>
+              <label class="wide">上传人物静物图<input id="portraitFile" type="file" accept="image/*" /></label>
+              <label>客厅图片 URL<input name="livingImage" /></label>
+              <label>上传客厅图<input class="room-file" data-image-key="livingImage" type="file" accept="image/*" /></label>
+              <label>厨房图片 URL<input name="kitchenImage" /></label>
+              <label>上传厨房图<input class="room-file" data-image-key="kitchenImage" type="file" accept="image/*" /></label>
+              <label>书房图片 URL<input name="studyImage" /></label>
+              <label>上传书房图<input class="room-file" data-image-key="studyImage" type="file" accept="image/*" /></label>
+              <label>卧室图片 URL<input name="bedroomImage" /></label>
+              <label>上传卧室图<input class="room-file" data-image-key="bedroomImage" type="file" accept="image/*" /></label>
+              <label>阳台图片 URL<input name="balconyImage" /></label>
+              <label>上传阳台图<input class="room-file" data-image-key="balconyImage" type="file" accept="image/*" /></label>
+              <label>偷看镜头图片 URL<input name="cameraImage" /></label>
+              <label>上传偷看镜头图<input class="room-file" data-image-key="cameraImage" type="file" accept="image/*" /></label>
+              <p class="wide form-help">可填写真实在线图片 URL，也可本地上传。GitHub Pages 建议使用 assets/images 下的相对路径。</p>
+            </div>
+          </div>
+          <footer class="modal-footer">
+            <button class="text-button close-modal" type="button">取消</button>
+            <button class="primary-button" type="submit">保存并回家</button>
+          </footer>
+        </form>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="profileModal">
+      <section class="modal profile-modal" role="dialog" aria-modal="true">
+        <header class="modal-header">
+          <div><span class="eyebrow">CHARACTER FILE</span><h2>完整人物设定</h2></div>
+          <button class="icon-button close-profile" type="button">×</button>
+        </header>
+        <div class="profile-tabs">
+          <button class="active" data-profile="xingchen" type="button">沈星尘</button>
+          <button data-profile="shentan" type="button">沈檀</button>
+        </div>
+        <article class="profile-text" id="profileText"></article>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="requirementModal">
+      <section class="modal requirement-modal" role="dialog" aria-modal="true">
+        <header class="modal-header">
+          <div><span class="eyebrow">MODULE RULES</span><h2 id="requirementTitle">修改模块要求</h2></div>
+          <button class="icon-button close-requirement" type="button">×</button>
+        </header>
+        <label class="requirement-editor">这个模块应该怎样表现<textarea id="requirementEditor" rows="10"></textarea></label>
+        <footer class="modal-footer">
+          <button class="text-button close-requirement" type="button">取消</button>
+          <button class="primary-button" id="saveRequirement" type="button">保存要求</button>
+        </footer>
+      </section>
+    </div>
+
+    <div class="modal-backdrop hidden" id="surpriseModal">
+      <section class="modal surprise-modal" role="dialog" aria-modal="true">
+        <header class="modal-header">
+          <div><span class="eyebrow">NOTES & SURPRISES</span><h2 class="editable-module-title" data-title-key="surprise">沈檀留下的东西</h2></div>
+          <button class="icon-button close-surprise" type="button">×</button>
+        </header>
+        <div class="surprise-toolbar">
+          <button class="primary-button" id="newSurprise" type="button">再拆一张</button>
+          <button class="text-button requirement-button" type="button" data-requirement="surprise">修改要求</button>
+          <button class="text-button" id="clearSurprises" type="button">清空</button>
+        </div>
+        <div class="feed-list surprise-list" id="surpriseList"></div>
+      </section>
+    </div>
+
+    <div class="toast" id="toast" role="status"></div>
+    <script src="./script.js?v=20260618-7"></script>
+    <script>
+      if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js?v=20260618-7");
+    </script>
+  </body>
+</html>
