@@ -1,9 +1,8 @@
-const CACHE_NAME = "beibei-home-v9-gate-rewrite";
+const CACHE_NAME = "beibei-home-v11-gate-final";
 const FILES = [
   "./",
   "./index.html",
   "./style.css",
-  "./gate.js",
   "./script.js",
   "./manifest.json",
   "./assets/images/identity-still-life.png",

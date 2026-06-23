@@ -317,7 +317,6 @@ function renderAll() {
   renderImages();
   renderCustomTitles();
   renderLoginWallLine();
-  renderKeyGate();
 }
 
 function renderLoginWallLine() {
@@ -326,26 +325,7 @@ function renderLoginWallLine() {
   target.textContent = chooseNoRepeat(loginWallLines, "login-wall", 8);
 }
 
-function renderKeyGate() {
-  try {
-    var gate = document.querySelector("#keyGate");
-    if (!gate) return console.warn("门禁元素不存在");
-    // 直接读 localStorage 和 sessionStorage，不走 state 合并
-    var saved = {};
-    try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch(e) {}
-    var gateEnabled = (saved.config && saved.config.gateEnabled) || defaultConfig.gateEnabled || "on";
-    var unlocked = sessionStorage.getItem(STORAGE_KEY + "-gate-unlocked") === "yes";
-    var question = (saved.config && saved.config.gateQuestion) || defaultConfig.gateQuestion || "嗯。这是谁的小家？";
-    var qEl = document.querySelector("#keyQuestion");
-    if (qEl) qEl.textContent = question;
-    console.log("[门禁] gateEnabled:", gateEnabled, "unlocked:", unlocked);
-    if (gateEnabled !== "on" || unlocked) {
-      gate.classList.add("opened");
-    } else {
-      gate.classList.remove("opened");
-    }
-  } catch(e) { console.error("[门禁] renderKeyGate 出错:", e); }
-}
+// 门禁已由 index.html 内联脚本处理，此处不再干预
 
 function renderCustomTitles() {
   document.querySelectorAll(".editable-module-title[data-title-key]").forEach((element) => {

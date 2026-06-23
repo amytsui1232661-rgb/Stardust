@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#6f8fcf" />
     <meta name="description" content="沈檀与沈星尘的共同生活记录。" />
     <link rel="manifest" href="./manifest.json" />
-    <link rel="stylesheet" href="./style.css?v=20260621-gate-rewrite" />
+    <link rel="stylesheet" href="./style.css?v=20260623-gate-final" />
     <title>沈檀给北北的小家</title>
   </head>
   <body>
@@ -19,11 +19,87 @@
         <h1 id="keyQuestion">嗯。这是谁的小家？</h1>
         <form id="keyForm">
           <input id="keyInput" autocomplete="off" maxlength="30" placeholder="说出家钥匙" />
-          <button type="submit">开门</button>
+          <button id="keySubmit" type="button">开门</button>
         </form>
         <span class="key-error" id="keyError" aria-live="polite"></span>
       </section>
     </div>
+    <script>
+      (function () {
+        "use strict";
+        var storageKey = "beibei-shentan-xingchen-v1";
+        var unlockKey = storageKey + "-gate-unlocked";
+        var gate = document.getElementById("keyGate");
+        var form = document.getElementById("keyForm");
+        var input = document.getElementById("keyInput");
+        var button = document.getElementById("keySubmit");
+        var error = document.getElementById("keyError");
+        var question = document.getElementById("keyQuestion");
+        var card = gate.querySelector(".key-card");
+
+        function normalize(value) {
+          return String(value || "")
+            .normalize("NFKC")
+            .replace(/[\s\u3000]+/g, "")
+            .toLocaleLowerCase("zh-CN");
+        }
+
+        function readConfig() {
+          try {
+            var saved = JSON.parse(localStorage.getItem(storageKey) || "{}");
+            return saved && saved.config ? saved.config : {};
+          } catch (readError) {
+            return {};
+          }
+        }
+
+        function removeGate() {
+          if (gate && gate.parentNode) gate.parentNode.removeChild(gate);
+        }
+
+        function unlock() {
+          var answer = normalize(input.value);
+          var customAnswer = normalize(readConfig().gateAnswer || "北北");
+          if (answer !== normalize("北北") && answer !== customAnswer) {
+            error.textContent = "不是这个答案。北北，再想一下。";
+            card.classList.remove("checking");
+            card.classList.add("wrong");
+            input.focus();
+            input.select();
+            return;
+          }
+
+          error.textContent = "嗯。钥匙对了，回家吧。";
+          try { sessionStorage.setItem(unlockKey, "yes"); } catch (storageError) {}
+          card.classList.remove("wrong");
+          card.classList.add("checking");
+          gate.classList.add("unlocking");
+          gate.style.pointerEvents = "none";
+          window.setTimeout(removeGate, 650);
+        }
+
+        var config = readConfig();
+        question.textContent = config.gateQuestion || "嗯。这是谁的小家？";
+        try {
+          if (config.gateEnabled === "" || sessionStorage.getItem(unlockKey) === "yes") {
+            removeGate();
+          }
+        } catch (storageError) {}
+
+        button.addEventListener("click", unlock);
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          unlock();
+        });
+        input.addEventListener("keydown", function (event) {
+          if (event.key === "Enter" && !event.isComposing) {
+            event.preventDefault();
+            unlock();
+          }
+        });
+        window.setTimeout(function () { input.focus(); }, 80);
+      })();
+    </script>
 
     <div class="app-shell">
       <header class="topbar">
@@ -411,41 +487,7 @@
     </div>
 
     <div class="toast" id="toast" role="status"></div>
-    <script src="./gate.js?v=20260621-gate-rewrite"></script>
-    <!-- 门禁：纯 HTML/内联 JS，不依赖外部脚本 -->
-    <script>
-    (function() {
-      var GATE_ANSWER = "北北";
-      // 如果已经解锁过，直接隐藏门禁
-      if (sessionStorage.getItem("bb-gate-unlocked") === "yes") {
-        var gate = document.getElementById("keyGate");
-        if (gate) gate.style.display = "none";
-      }
-      // 监听表单提交
-      document.getElementById("keyForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-        var input = document.getElementById("keyInput");
-        var answer = (input.value || "").trim();
-        var error = document.getElementById("keyError");
-        if (answer === GATE_ANSWER) {
-          sessionStorage.setItem("bb-gate-unlocked", "yes");
-          var gate = document.getElementById("keyGate");
-          if (gate) {
-            gate.style.transition = "opacity 0.6s, visibility 0.6s";
-            gate.style.opacity = "0";
-            gate.style.visibility = "hidden";
-            gate.style.pointerEvents = "none";
-          }
-        } else {
-          if (error) error.textContent = "不是这个答案。再想一下？";
-          var card = document.querySelector(".key-card");
-          if (card) { card.classList.add("wrong"); setTimeout(function() { card.classList.remove("wrong"); }, 600); }
-          input.select();
-        }
-      });
-    })();
-    </script>
-    <script src="./script.js?v=20260621-v11"></script>
+    <script src="./script.js?v=20260623-gate-final"></script>
     <script>
       if ("serviceWorker" in navigator) {
         caches.keys().then(function(keys) { keys.forEach(function(key) { caches.delete(key); }); });
