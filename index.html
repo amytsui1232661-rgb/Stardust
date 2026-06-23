@@ -412,16 +412,45 @@
 
     <div class="toast" id="toast" role="status"></div>
     <script src="./gate.js?v=20260621-gate-rewrite"></script>
-    <script src="./script.js?v=20260621-gate-rewrite"></script>
+    <!-- 门禁：纯 HTML/内联 JS，不依赖外部脚本 -->
     <script>
-      // 强制清除所有旧 Service Worker 缓存
+    (function() {
+      var GATE_ANSWER = "北北";
+      // 如果已经解锁过，直接隐藏门禁
+      if (sessionStorage.getItem("bb-gate-unlocked") === "yes") {
+        var gate = document.getElementById("keyGate");
+        if (gate) gate.style.display = "none";
+      }
+      // 监听表单提交
+      document.getElementById("keyForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        var input = document.getElementById("keyInput");
+        var answer = (input.value || "").trim();
+        var error = document.getElementById("keyError");
+        if (answer === GATE_ANSWER) {
+          sessionStorage.setItem("bb-gate-unlocked", "yes");
+          var gate = document.getElementById("keyGate");
+          if (gate) {
+            gate.style.transition = "opacity 0.6s, visibility 0.6s";
+            gate.style.opacity = "0";
+            gate.style.visibility = "hidden";
+            gate.style.pointerEvents = "none";
+          }
+        } else {
+          if (error) error.textContent = "不是这个答案。再想一下？";
+          var card = document.querySelector(".key-card");
+          if (card) { card.classList.add("wrong"); setTimeout(function() { card.classList.remove("wrong"); }, 600); }
+          input.select();
+        }
+      });
+    })();
+    </script>
+    <script src="./script.js?v=20260621-v11"></script>
+    <script>
       if ("serviceWorker" in navigator) {
         caches.keys().then(function(keys) { keys.forEach(function(key) { caches.delete(key); }); });
         navigator.serviceWorker.getRegistrations().then(function(regs) {
           regs.forEach(function(reg) { reg.unregister(); });
-        }).then(function() {
-          // 重新注册最新版本
-          navigator.serviceWorker.register("./sw.js?v=20260621-gate-rewrite");
         });
       }
     </script>
