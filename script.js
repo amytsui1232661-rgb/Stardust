@@ -58,13 +58,14 @@ const defaultConfig = {
   apiKey: "",
   model: "deepseek-chat",
   maxReplyCount: "6",
-  chatRequirement: "沈檀称呼沈星尘为“七七”，常用简短的“嗯”。口语、克制、温柔，不使用文绉绉或学术词。可以自然使用 emoji 表情表达情绪，但不要滥用。沈檀会有自己的情绪与生活，不盲从。沈星尘不回消息时不连环催，但会敏感地反思是不是自己做错了。禁止称呼沈星尘为宝宝、老婆。沈檀知道北北正在屏幕另一边使用这个网站，可以偶尔自然提到屏幕、光标、刷新、网络、页面与她正在看他，形成男生亲手给女生留下网址并打破第四堵墙的感觉，但不要每句话都生硬重复。",
+  chatRequirement: "沈檀称呼沈星尘为“七七”，常用简短的“嗯”。口语、克制、温柔，不使用文绉绉或学术词。可以自然使用 emoji 表情表达情绪，但不要滥用。沈檀会有自己的情绪与生活，不盲从。沈星尘不回消息时不连环催，但会敏感地反思是不是自己做错了。禁止称呼沈星尘为宝宝、老婆。",
   statusRequirement: "状态要展示沈檀独立、连续的生活线，包括心情、位置、穿搭、正在做什么与内心想法。不要全部围绕等待七七上线，也不要让沈星尘手动指定他的心理。",
   physiologyRequirement: "心跳根据沈檀当前状态轻微变化。身高、肩宽、胸围、腰围等没有明确人设数据时显示“未设定”，不擅自编造；用户可在设置中自行填写。",
   roomsRequirement: "所有互动记录开头必须带“”。根据房间、时间和按钮内容生成具体生活片段。保留兄妹之间的复杂依赖、恶趣味、怨怼和关心，但避免空泛说教。每次尽量避免重复。沈檀知道北北通过网页点了房间互动，可以偶尔看向屏幕、发现光标或回应刷新动作。",
   cameraRequirement: "所有镜头记录开头必须带“”。展示沈檀自己的生活线，包括工作、做饭、整理头发、看手机、吃糖、照顾猫爪装饰、想起七七等。不要把他写成只会等待沈星尘上线。镜头可以偶尔被沈檀察觉，让他知道北北正在屏幕另一侧偷看，但大多数时候仍是自然生活。",
   surpriseRequirement: "所有纸条开头必须带“”。纸条可以冷淡、温柔、敏感、略显啰嗦或带一点被七七逗到的无奈，必须符合沈檀人设。",
   boundaryRequirement: "保留朋友创作的骨科关系设定与称呼，不删除或改写核心背景。互动可表达复杂亲密、占有欲、依赖、嫉妒与试探；不生成露骨性行为内容。",
+  wallbreakRequirement: "",
   portraitUrl: "./assets/images/identity-still-life.png",
   livingImage: "./assets/images/rooms/living.png",
   kitchenImage: "./assets/images/rooms/kitchen.png",
@@ -210,6 +211,14 @@ function defaultState() {
       makeLog("他重新扎了头发。半扎，因为七七说这样比较好看。")
     ],
     surprises: [],
+    localLibrary: {
+      replies: {},
+      rooms: {},
+      camera: [],
+      surprises: [],
+      statuses: [],
+      wallbreak: []
+    },
     customTitles: {},
     requirements: {
       chat: defaultConfig.chatRequirement,
@@ -218,7 +227,8 @@ function defaultState() {
       rooms: defaultConfig.roomsRequirement,
       camera: defaultConfig.cameraRequirement,
       surprise: defaultConfig.surpriseRequirement,
-      boundary: defaultConfig.boundaryRequirement
+      boundary: defaultConfig.boundaryRequirement,
+      wallbreak: defaultConfig.wallbreakRequirement
     },
     statusIndex: 0,
     recent: {}
@@ -230,14 +240,31 @@ function loadState() {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
     if (!saved) return defaultState();
     const base = defaultState();
+    const oldWallbreakChatText = "沈檀知道北北正在屏幕另一边使用这个网站，可以偶尔自然提到屏幕、光标、刷新、网络、页面与她正在看他，形成男生亲手给女生留下网址并打破第四堵墙的感觉，但不要每句话都生硬重复。";
+    const savedRequirements = { ...base.requirements, ...(saved.requirements || {}) };
+    savedRequirements.chat = String(savedRequirements.chat || base.requirements.chat)
+      .replace(oldWallbreakChatText, "")
+      .trim();
+    const shouldRestoreOpening = saved.initialChatVersion !== 1
+      && Array.isArray(saved.messages)
+      && saved.messages.length === 0;
     return {
       ...base,
       ...saved,
       config: { ...base.config, ...(saved.config || {}) },
-      requirements: { ...base.requirements, ...(saved.requirements || {}) },
-      messages: Array.isArray(saved.messages) ? saved.messages : base.messages,
+      requirements: savedRequirements,
+      messages: shouldRestoreOpening
+        ? base.messages
+        : (Array.isArray(saved.messages) ? saved.messages : base.messages),
       cameraLog: Array.isArray(saved.cameraLog) ? saved.cameraLog : base.cameraLog,
-      surprises: Array.isArray(saved.surprises) ? saved.surprises : []
+      surprises: Array.isArray(saved.surprises) ? saved.surprises : [],
+      localLibrary: {
+        ...base.localLibrary,
+        ...(saved.localLibrary || {}),
+        replies: { ...base.localLibrary.replies, ...(saved.localLibrary?.replies || {}) },
+        rooms: { ...base.localLibrary.rooms, ...(saved.localLibrary?.rooms || {}) }
+      },
+      initialChatVersion: 1
     };
   } catch {
     return defaultState();
@@ -439,6 +466,22 @@ function renderRooms() {
   });
 }
 
+function getRoomTimePeriod(date = new Date()) {
+  const hour = date.getHours();
+  if (hour >= 5 && hour < 11) return { key: "morning", label: "早晨" };
+  if (hour >= 11 && hour < 17) return { key: "noon", label: "中午" };
+  if (hour >= 17 && hour < 21) return { key: "evening", label: "傍晚" };
+  return { key: "night", label: "夜晚" };
+}
+
+function renderRoomLighting() {
+  const period = getRoomTimePeriod();
+  const frame = document.querySelector("#roomImageFrame");
+  const badge = document.querySelector("#roomTimeBadge");
+  if (frame) frame.dataset.time = period.key;
+  if (badge) badge.textContent = period.label;
+}
+
 function renderRoom() {
   const room = rooms[state.room] || rooms.living;
   document.querySelector("#roomEyebrow").textContent = room.name;
@@ -447,6 +490,7 @@ function renderRoom() {
   const image = document.querySelector("#roomImage");
   image.src = state.config[`${state.room}Image`] || defaultConfig[`${state.room}Image`];
   image.alt = `${room.name}场景`;
+  renderRoomLighting();
   const grid = document.querySelector("#interactionGrid");
   grid.innerHTML = "";
   room.actions.forEach((label) => {
@@ -463,6 +507,8 @@ function renderImages() {
   portrait.src = state.config.portraitUrl || defaultConfig.portraitUrl;
   const roomImage = document.querySelector("#roomImage");
   roomImage.src = state.config[`${state.room}Image`] || defaultConfig[`${state.room}Image`];
+  roomImage.alt = `${(rooms[state.room] || rooms.living).name}场景`;
+  renderRoomLighting();
 }
 
 function generatedRoomLines(roomKey, action) {
@@ -494,7 +540,8 @@ function generatedRoomLines(roomKey, action) {
     "。他看向镜头的位置：北北，我看见你的光标了。",
     "。网页刷新了一下，他像是知道屏幕另一边的人还没走。"
   ];
-  return openings.flatMap((a) => actions.flatMap((b) => endings.map((c) => `${a}${b}，${detail}${c}`)));
+  const generated = openings.flatMap((a) => actions.flatMap((b) => endings.map((c) => `${a}${b}，${detail}${c}`)));
+  return [...(state.localLibrary?.rooms?.[roomKey] || []), ...generated];
 }
 
 async function handleRoomAction(action) {
@@ -520,9 +567,10 @@ async function handleRoomAction(action) {
 }
 
 function generatedCameraPool() {
-  return cameraPieces.starts.flatMap((start) =>
+  const generated = cameraPieces.starts.flatMap((start) =>
     cameraPieces.actions.flatMap((action) => cameraPieces.endings.map((end) => start + action + end))
   );
+  return [...(state.localLibrary?.camera || []), ...generated];
 }
 
 async function addCameraShot() {
@@ -573,6 +621,7 @@ function renderStatus() {
     return;
   }
   const statuses = [
+    ...(state.localLibrary?.statuses || []),
     ["安静地操心", "厨房", "深蓝居家衫", "切苹果，顺便等七七回消息", "她不回也没关系。嗯……还是看一眼手机吧。"],
     ["有点自责", "书房", "灰蓝衬衫，袖口挽起", "删掉一段过于啰嗦的消息", "七七是不是不高兴？可能是我刚才问得太多。"],
     ["假装冷淡", "客厅", "黑色薄卫衣", "摆正猫爪抱枕", "不催。她愿意回来时，灯还亮着就行。"],
@@ -610,7 +659,7 @@ async function refreshStatus() {
       showToast("API 状态生成失败，已切换本地生活线。");
     }
   }
-  state.statusIndex = (state.statusIndex + 1) % 5;
+  state.statusIndex = (state.statusIndex + 1) % (5 + (state.localLibrary?.statuses?.length || 0));
   state.statusSnapshot = null;
   saveState();
   renderStatus();
@@ -717,7 +766,8 @@ async function sendChat(text) {
   }
   if (!replies) {
     const type = detectReplyType(text);
-    replies = chooseNoRepeat(localReplyBank[type], `reply-${type}`, 2);
+    const customReplies = state.localLibrary?.replies?.[type] || [];
+    replies = chooseNoRepeat([...customReplies, ...localReplyBank[type]], `reply-${type}`, 2);
   }
   replies.forEach((reply, index) => {
     setTimeout(() => {
@@ -842,7 +892,7 @@ function renderApiStatus(customText) {
 }
 
 async function createSurprise() {
-  let note = chooseNoRepeat(surpriseBank, "surprise", 6);
+  let note = chooseNoRepeat([...(state.localLibrary?.surprises || []), ...surpriseBank], "surprise", 6);
   if (apiReady()) {
     try {
       note = await askApi(`写一张沈檀留给七七的小纸条或生活惊喜，1到3句。\n${state.requirements.surprise}`);
@@ -893,27 +943,99 @@ function openSurprises() {
 
 async function updateLibrary() {
   const button = document.querySelector("#updateLibrary");
+  const progress = document.querySelector("#libraryProgress");
+  const progressText = document.querySelector("#libraryProgressText");
+  const progressPercent = document.querySelector("#libraryProgressPercent");
+  const progressBar = document.querySelector("#libraryProgressBar");
+  const setProgress = (value, text) => {
+    const percent = Math.max(0, Math.min(100, Math.round(value)));
+    progress.classList.remove("hidden");
+    progressText.textContent = text;
+    progressPercent.textContent = `${percent}%`;
+    progressBar.style.width = `${percent}%`;
+  };
+  const cleanLines = (text) => String(text || "")
+    .split(/\n+/)
+    .map((line) => line.replace(/^\s*(?:[-*]|\d+[.、])\s*/, "").trim())
+    .filter(Boolean);
+  const parseReplyLines = (text) => {
+    const result = {};
+    cleanLines(text).forEach((line) => {
+      const match = line.match(/^(normal|upset|apple|daddy|ignored)\s*[:：|]\s*(.+)$/i);
+      if (!match) return;
+      const replies = match[2].split(/[|｜]/).map((item) => item.trim()).filter(Boolean);
+      if (replies.length) (result[match[1].toLowerCase()] ||= []).push(replies);
+    });
+    return result;
+  };
   button.disabled = true;
   button.textContent = "更新中…";
+  let updateInterrupted = false;
+  setProgress(4, "正在整理现有语料");
+  state.recent = {};
   if (apiReady()) {
     try {
-      const text = await askApi(`根据沈檀和沈星尘人设，生成6条互不重复的沈檀生活摄像机记录，每行一条，每条以开头。\n${state.requirements.camera}`);
-      const lines = text.split(/\n+/).map(prefixTest).filter((line) => line.length > 8).slice(0, 6);
-      lines.reverse().forEach((line) => state.cameraLog.unshift(makeLog(line)));
-      showToast("语库已通过 API 更新");
+      setProgress(12, "正在更新聊天回复");
+      const replyText = await askApi(`为沈檀本地聊天语库生成25组回复。每行严格使用“类别：短句1｜短句2｜短句3”，类别只能是normal、upset、apple、daddy、ignored，每类5组。符合人设，不要编号。\n${state.requirements.chat}`);
+      state.localLibrary.replies = parseReplyLines(replyText);
+
+      const roomEntries = Object.entries(rooms);
+      for (let index = 0; index < roomEntries.length; index += 1) {
+        const [roomKey, room] = roomEntries[index];
+        setProgress(24 + (index / roomEntries.length) * 32, `正在更新房间：${room.name}`);
+        const roomText = await askApi(`为${room.name}生成10条可离线使用的生活互动结果，每行一条，1到2句，符合沈檀人设。只写场景与回应，不要编号。\n${state.requirements.rooms}`);
+        state.localLibrary.rooms[roomKey] = cleanLines(roomText).slice(0, 10);
+      }
+
+      setProgress(60, "正在更新生活镜头");
+      const cameraText = await askApi(`生成20条互不重复、可离线使用的沈檀生活镜头，每行一条，展示他的独立生活线，不要编号。\n${state.requirements.camera}`);
+      state.localLibrary.camera = cleanLines(cameraText).slice(0, 20);
+
+      setProgress(73, "正在更新纸条与惊喜");
+      const surpriseText = await askApi(`生成20张沈檀写给七七的小纸条，每行一张，1到3句，不要编号。\n${state.requirements.surprise}`);
+      state.localLibrary.surprises = cleanLines(surpriseText).slice(0, 20);
+
+      setProgress(84, "正在更新角色状态");
+      const statusText = await askApi(`生成12组沈檀状态，每行严格使用“心情｜位置｜穿搭｜正在做｜内心想法”，不要编号。\n${state.requirements.status}`);
+      state.localLibrary.statuses = cleanLines(statusText)
+        .map((line) => line.split(/[|｜]/).map((item) => item.trim()))
+        .filter((parts) => parts.length >= 5)
+        .map((parts) => parts.slice(0, 5))
+        .slice(0, 12);
+
+      setProgress(94, "正在更新破壁备用语料");
+      const wallbreakText = await askApi(`生成8条沈檀隔着屏幕对北北说的自然短段落，每行一条，每条40到100字。只用于破壁模块，不要编号。\n${state.requirements.wallbreak || ""}`);
+      state.localLibrary.wallbreak = cleanLines(wallbreakText).slice(0, 8);
+      showToast("全部本地语料库已更新");
     } catch {
-      state.recent = {};
-      showToast("API 更新失败，已重置本地防重复记录");
+      updateInterrupted = true;
+      showToast("更新中断，已保留成功完成的部分");
     }
   } else {
-    state.recent = {};
-    showToast("本地语库的防重复记录已刷新");
+    const stages = [
+      [20, "正在整理聊天回复"],
+      [40, "正在整理房间互动"],
+      [60, "正在整理生活镜头"],
+      [76, "正在整理纸条与惊喜"],
+      [90, "正在整理状态与破壁"]
+    ];
+    for (const [value, text] of stages) {
+      setProgress(value, text);
+      await new Promise((resolve) => setTimeout(resolve, 180));
+    }
+    showToast("全部本地语料的防重复记录已刷新");
   }
   state.cameraLog = state.cameraLog.slice(0, 100);
   saveState();
   renderCameraLog();
+  if (updateInterrupted) {
+    progressText.textContent = "更新中断，成功部分已保存";
+  } else {
+    setProgress(100, "全部语料更新完成");
+  }
   button.disabled = false;
   button.textContent = "更新语库";
+  window.setTimeout(() => progress.classList.add("hidden"), 1800);
 }
 
 function importImageFile(input, configKey) {
@@ -926,7 +1048,7 @@ function importImageFile(input, configKey) {
     saveState();
     fillSettingsForm();
     renderImages();
-    showToast("图片已保存到当前浏览器");
+    showToast("图片已保存，早中晚光线会继续生效");
   };
   reader.readAsDataURL(file);
 }
@@ -975,7 +1097,8 @@ function readSettingsForm() {
     roomsRequirement: "rooms",
     cameraRequirement: "camera",
     surpriseRequirement: "surprise",
-    boundaryRequirement: "boundary"
+    boundaryRequirement: "boundary",
+    wallbreakRequirement: "wallbreak"
   };
   Object.entries(data).forEach(([key, value]) => {
     if (requirementFields[key]) state.requirements[requirementFields[key]] = value;
@@ -990,6 +1113,7 @@ function saveSettings(event) {
   saveState();
   closeSettings();
   renderAll();
+  renderRoomLighting();
   showToast("设置已经保存");
 }
 
@@ -1152,12 +1276,105 @@ renderAll();
 installModuleResizers();
 setInterval(renderTimes, 1000);
 setInterval(renderPhysiology, 1800);
+setInterval(renderRoomLighting, 60000);
 document.querySelector(".heartbeat-line").addEventListener("mouseenter", renderPhysiology);
 document.querySelector(".heartbeat-line").addEventListener("mouseleave", renderPhysiology);
 
 /* ========== 以下为新增功能（不影响原有门禁） ========== */
 
 (function() {
+  // -- 贴贴模块 --
+  try {
+    if (!state.config.touchRequirement) state.config.touchRequirement = "18+，不ooc，互相尊重";
+    var tShy = parseInt(localStorage.getItem("bb-shy")||"0");
+    var tHot = parseInt(localStorage.getItem("bb-hot")||"0");
+    var tLust = parseInt(localStorage.getItem("bb-lust")||"0");
+    function saveTouch() { localStorage.setItem("bb-shy",tShy); localStorage.setItem("bb-hot",tHot); localStorage.setItem("bb-lust",tLust); }
+    function updateTouchUI() {
+      var s=document.querySelector("#shyVal"), h=document.querySelector("#hotVal"), l=document.querySelector("#lustVal");
+      if(s)s.textContent=tShy; if(h)h.textContent=tHot; if(l)l.textContent=tLust;
+      var hr=document.querySelector("#heartRate"); if(hr)hr.textContent = 72 + Math.round((tHot+tLust)*0.35);
+      var nipStage = Math.min(5, Math.floor((tShy+tHot+tLust)/3/17));
+      ["lnip","rnip"].forEach(function(id) {
+        var el = document.querySelector('.touch-btn[data-zone="'+id+'"]');
+        if(el) { el.classList.remove("nip-0","nip-1","nip-2","nip-3","nip-4","nip-5"); el.classList.add("nip-"+nipStage); }
+      });
+      refreshTouchThought();
+    }
+    // 沈檀第一人称色色想法——独立函数，外部可调用
+    function refreshTouchThought() {
+      var tt = document.querySelector("#touchThought"); if(!tt) return;
+      var avg = (tShy+tHot+tLust)/3;
+      var hasChat = (state.messages||[]).filter(function(m){return !m.recalled&&m.text;}).length > 2;
+      var lastTouch = zoneNames[state._lastTouchZone] || "";
+      var pools = [
+        ["我没什么想法。","在忙自己的事。","很正常，没什么特别的。"],
+        ["刚才那一下……我记着了。","她手碰到我的时候，我停了一秒。","有点在意。不是有点——好吧，就是很在意。"],
+        ["我尽量保持正常，但身体不太配合。","她知不知道我在忍。","喉咙有点干。不是因为口渴。"],
+        ["我想要她继续。这句是实话。","不想装了。反正她也看得出来。","脑子里没有别的事了，只有她。"],
+        ["我在想她等一下会摸哪里。","她手放上来的时候我可能不会像现在这么冷静。","快忍不住了。她知道。她就是知道才继续的。"],
+        ["我想把她拉过来。现在。","脑子里全是刚才的画面。","不写了。写不下去了。"]
+      ];
+      var tier = avg<16?0:avg<31?1:avg<51?2:avg<71?3:avg<86?4:5;
+      var pool = pools[tier].slice();
+      if (hasChat && tier<4) {
+        pool = pool.concat(["我刚才说了什么来着……不重要。","聊天的时候也在想。一直。","她说的话我都记着。包括那些不重要的。"]);
+      }
+      if (lastTouch && tier>0) {
+        pool = pool.concat(["刚才她碰我"+lastTouch+"的时候，我差点没藏住。","她的手停在"+lastTouch+"那一瞬间我的脑子是空的。","下次她再碰"+lastTouch+"我就不忍了。我说真的。"]);
+      }
+      tt.textContent = pool[Math.floor(Math.random()*pool.length)];
+    }
+    updateTouchUI();
+
+    var touchDB = {
+      hair: { low:["嗯……别弄乱。"], mid:["……还挺舒服的。"], high:["七七，你这样我会控制不住的。"] },
+      face: { low:["干嘛。"], mid:["你的手好暖。"], high:["七七，你摸我脸的时候我心跳好快。"] },
+      neck: { low:["……脖子不行。"], mid:["嗯……很敏感。"], high:["你再碰一下脖子我就亲你。"] },
+      throat: { low:["……喉结不行。"], mid:["喉结被你摸到在滚……感觉到了吗。"], high:["你指尖一碰到喉结我就不会说话了。"] },
+      chest: { low:["……手。"], mid:["心跳很快吧。"], high:["你再按一下我就把你拉过来。"] },
+      lnip: { low:["……左边不行。"], mid:["左边比右边敏感……你怎么知道的。"], high:["你碰左边的时候我整个人都麻了。"] },
+      rnip: { low:["……右边也来？"], mid:["两边都给你了。"], high:["左右轮流来……我被你玩死了。"] },
+      waist: { low:["腰不行。"], mid:["嗯……腰比较敏感。"], high:["腰被你摸软了，满意吗，七七。"] },
+      thigh: { low:["……胆子不小。"], mid:["大腿肌肉在绷……感觉到了吗。"], high:["你再摸一下大腿我就受不了了。"] }
+    };
+    var zoneNames = {hair:"头发",face:"脸",neck:"脖子",throat:"喉结",chest:"胸口",lnip:"左咪咪",rnip:"右咪咪",waist:"腰",thigh:"大腿"};
+    var weights = {hair:[3,3,2],face:[5,4,3],neck:[8,7,5],throat:[10,9,8],chest:[6,8,10],lnip:[10,10,14],rnip:[10,10,13],waist:[8,10,12],thigh:[10,12,15]};
+
+    document.querySelectorAll(".touch-btn").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var zone = this.dataset.zone;
+        state._lastTouchZone = zone;
+        var w = weights[zone]||[3,3,2];
+        tShy = Math.min(100, tShy+w[0]); tHot = Math.min(100, tHot+w[1]); tLust = Math.min(100, tLust+w[2]);
+        saveTouch(); updateTouchUI();
+        var lvl = ((tShy+tHot+tLust)/3)<25?"low":((tShy+tHot+tLust)/3)<60?"mid":"high";
+        var pool = touchDB[zone]&&touchDB[zone][lvl] ? touchDB[zone][lvl] : ["嗯……"];
+        var respEl = document.querySelector("#touchResp");
+        if(respEl) respEl.textContent = pool[Math.floor(Math.random()*pool.length)];
+        saveState();
+      });
+    });
+
+    document.querySelector("#touchSettings") && document.querySelector("#touchSettings").addEventListener("click", function() {
+      var row = document.querySelector("#touchReqRow"); row.classList.toggle("hidden");
+      document.querySelector("#touchReqInput").value = state.config.touchRequirement || "18+，不ooc，互相尊重";
+    });
+    document.querySelector("#saveTouchReq") && document.querySelector("#saveTouchReq").addEventListener("click", function() {
+      state.config.touchRequirement = document.querySelector("#touchReqInput").value.trim() || "18+，不ooc，互相尊重";
+      saveState(); document.querySelector("#touchReqRow").classList.add("hidden");
+    });
+    // 聊天后刷新想法
+    var _origChatHandler = null;
+    var chatForm = document.querySelector("#chatForm");
+    if (chatForm) {
+      _origChatHandler = chatForm.onsubmit;
+      chatForm.addEventListener("submit", function() {
+        setTimeout(function() { try { refreshTouchThought(); } catch(e) {} }, 2500);
+      });
+    }
+  } catch(e) { console.warn("贴贴:", e); }
+
   // -- 标题改"小家" --
   state.config.siteTitle = state.config.siteTitle.replace(/夜灯/g, "小家");
 
@@ -1245,7 +1462,10 @@ document.querySelector(".heartbeat-line").addEventListener("mouseleave", renderP
       hair: { low:["嗯……别弄乱。","头发有什么好摸的。"], mid:["……还挺舒服的。","别停。"], high:["七七，你这样我会控制不住的。","你再摸下去我就不装了。"] },
       face: { low:["干嘛。","别碰脸。"], mid:["你的手好暖。","再摸一下。"], high:["七七，你摸我脸的时候我心跳好快。","脸都给你摸红了……满意了？"] },
       neck: { low:["……脖子不行。","痒。"], mid:["嗯……很敏感。","你手好软，故意的吧。"], high:["你再碰一下脖子我就亲你。","七七……我整个人都被你点着了。"] },
+      throat: { low:["……喉结不行。","别碰那里。"], mid:["喉结被你摸到在滚……感觉到了吗。","嗯……你手再停一秒我就亲你。"], high:["七七，喉结是我最受不了的地方。","你指尖一碰到喉结我就不会说话了……你故意的。"] },
       chest: { low:["……手。","你碰哪儿呢。"], mid:["心跳很快吧，你感觉到了吗。","嗯……再往下一点也可以。"], high:["七七，你摸到我心跳了对吧。","你再按一下我就把你拉过来。"] },
+      lnip: { low:["……左边不行。","你手放哪儿呢。"], mid:["嗯……左边比右边敏感。","你怎么知道的……左边一碰我就绷不住。"], high:["七七你碰左边的时候我整个人都麻了。","左边被你掐了一下……你是真的不怕我失控。"] },
+      rnip: { low:["……右边也来？","你是不打算放过我了。"], mid:["右边没左边那么敏感……但你碰我还是会抖。","嗯……两边都给你了，还满意吗。"], high:["两边一起的时候我真的控制不住。","七七你故意的……左右轮流来，我被你玩死了。"] },
       waist: { low:["腰不行。","痒。"], mid:["嗯……腰比较敏感。","你手放在这里我没办法想别的。"], high:["腰被你摸软了，满意吗，七七。","我腰都给你了，你还想摸哪儿。"] },
       thigh: { low:["……胆子不小。","大腿不行。"], mid:["嗯……再往上一点。","大腿肌肉在绷……感觉到了吗。"], high:["你再摸一下大腿我就受不了了。","腿都在抖了……七七你赢了好吧。"] }
     };
@@ -1254,16 +1474,12 @@ document.querySelector(".heartbeat-line").addEventListener("mouseleave", renderP
     document.querySelector("#shyVal") && (document.querySelector("#shyVal").textContent = tShy);
     document.querySelector("#hotVal") && (document.querySelector("#hotVal").textContent = tHot);
 
-    document.querySelector("#toggleTouch") && document.querySelector("#toggleTouch").addEventListener("click", function() {
-      var b = document.querySelector("#touchBody"); b.classList.toggle("hidden");
-      this.textContent = b.classList.contains("hidden") ? "▼" : "▲";
-    });
 
     document.querySelectorAll(".touch-zone").forEach(function(z) {
       z.addEventListener("click", function() {
         var zone = this.dataset.zone;
-        var names = {hair:"头发",face:"脸",neck:"脖子",chest:"胸口",waist:"腰",thigh:"大腿"};
-        var w = {hair:[3,2],face:[5,3],neck:[8,6],chest:[6,10],waist:[8,12],thigh:[10,15]};
+        var names = {hair:"头发",face:"脸",neck:"脖子",throat:"喉结",chest:"胸口",lnip:"左咪咪",rnip:"右咪咪",waist:"腰",thigh:"大腿"};
+        var w = {hair:[3,2],face:[5,3],neck:[8,6],throat:[10,8],chest:[6,10],lnip:[10,14],rnip:[10,14],waist:[8,12],thigh:[10,15]};
         var add = w[zone] || [3,3];
         tShy = Math.min(100, tShy + add[0]); tHot = Math.min(100, tHot + add[1]);
         localStorage.setItem("bb-touch-shy", tShy); localStorage.setItem("bb-touch-hot", tHot);
@@ -1271,6 +1487,22 @@ document.querySelector(".heartbeat-line").addEventListener("mouseleave", renderP
         document.querySelector("#hotVal").textContent = tHot;
         var hr = document.querySelector("#heartRate"); if (hr) hr.textContent = 72 + Math.round(tHot * 0.6);
         var lvl = ((tShy+tHot)/2) < 25 ? "low" : ((tShy+tHot)/2) < 60 ? "mid" : "high";
+        // 咪咪色彩渐变：6 阶段 粉→红
+        var avg = (tShy + tHot) / 2;
+        var nipStage = avg < 15 ? 0 : avg < 30 ? 1 : avg < 50 ? 2 : avg < 70 ? 3 : avg < 85 ? 4 : 5;
+        ["lnip","rnip"].forEach(function(nipId) {
+          var nipEl = document.querySelector('.touch-zone[data-zone="' + nipId + '"]') || document.querySelector('.nip-zone[data-zone="' + nipId + '"]');
+          if (nipEl) {
+            nipEl.classList.remove("nip-stage-0","nip-stage-1","nip-stage-2","nip-stage-3","nip-stage-4","nip-stage-5");
+            nipEl.classList.add("nip-stage-" + nipStage);
+            // 同步更新图标
+            var icon = nipEl.querySelector(".touch-icon");
+            if (icon) {
+              var stages = ["🩷","💗","💖","❤️‍🔥","❤️","♥️"];
+              icon.textContent = stages[nipStage] || "❤️";
+            }
+          }
+        });
         var pool = touchDB[zone] && touchDB[zone][lvl] ? touchDB[zone][lvl] : ["嗯……"];
         var resp = pool[Math.floor(Math.random() * pool.length)];
         document.querySelector("#touchResponseText").textContent = resp;
@@ -1294,6 +1526,70 @@ document.querySelector(".heartbeat-line").addEventListener("mouseleave", renderP
   try {
     if (!state.intimateHistory) state.intimateHistory = [];
     var _curIdx = -1;
+    // 随机前戏场景池——每次生成随机抽取，确保不重复
+    var FOREPLAY_POOL = [
+      "场景：她刚洗完澡，头发没吹干，穿着你的衬衫光脚踩进卧室。衬衫只系了两颗扣子，锁骨和半截胸口都露在外面。你本来靠在床头看书，她直接跨上来把书抽走——书掉在地上的声音比想象中响。",
+      "场景：她在厨房偷吃糖，被你抓到了。你说只能拿两颗，她当着你的面拿了第三颗塞进嘴里，眼神分明在挑衅。你伸手去抢那颗糖的时候，手指碰到了她的嘴唇——然后你们同时停住了。糖在嘴里化开的甜味还没散。",
+      "场景：今晚看电影，她窝在沙发上靠在你肩上，毯子盖着两个人的腿。电影放了什么你其实没看进去——因为她的手指一直在你大腿上画圈，很轻，轻到你觉得可能是毯子的褶皱。直到她突然仰头看你，问：电影好看吗。你知道她不是真的在问电影。",
+      "场景：她从背后抱住了正在切苹果的你。手环上来的那一瞬间你的刀停在了半空。她的脸埋在你后背，说了一句你没听清。你放下刀转过身，她没松手，变成了面对面抱着的姿势。她的睫毛在你胸口眨了一下。",
+      "场景：你们吵架了，不算激烈但两个人都没说话。她躺在自己床上背对着你。你以为她睡了，关了灯。黑暗中大概过了十分钟，她的声音突然响起来：沈檀，你过来。你说我过去干嘛。她说，过来看看不就知道了。",
+      "场景：她今天特别粘人——可能在外面遇到了什么事，没跟你说，只是一直往你这边靠。你问她怎么了，她说没事，但手抓着你的衣角没有松开。你低下头看她，她用很小的声音说：别问，今晚只听我的。",
+      "场景：你们在阳台吹风。城市灯火在楼下，她的苹果风铃在轻轻响。你正要说点什么，她突然踮脚亲了你一下——很轻，嘴唇碰了一下嘴角就收了回来，像在试探。你还没来得及反应，她已经退回去靠着栏杆，脸上写满'刚才不是我'。"
+    ];
+
+    var RANDOM_REQ = [
+      "写一篇沈檀的私密日记，第一人称，2000+字，18+，口语自然，不要任何小标题或分段标签——就像他真的在深夜打开日记本写下来的那样，是连续的叙事。",
+      "",
+      "从下面的场景池中选一个开局（或自己创作类似的），自然地写清楚今晚是怎么开始的、谁先打破了平常的距离：",
+      "{FOREPLAY_PICK}",
+      "",
+      "接下来不要急着直奔主题。沈檀是克制的人——他会从最轻的触碰开始，亲她的泪痣、耳垂、后颈，手慢慢从腰滑到肋骨再到胸口。要写她的手是怎么回应的——攥着你的衣服、掐你手臂、还是反过来扯你领口。你们在过程中会有对话，七七不耐烦但每次都还是回答了他的确认。她可能会在某个瞬间突然骂你啰嗦或者是喊你Daddy——那一瞬间你的反应是什么。注意写声音——呼吸变快的节点、布料摩擦、床垫承受两个人重量时的轻微响动。每次前戏的侧重要不同（有时候偏向亲吻和手的细节，有时候偏向两个人之间的对话和心理拉扯，有时候偏向触感和声音的描写）。",
+      "",
+      "自然的过渡到至少三种姿势。姿势切换要有机——她累了换省力的，她想看你的脸换正面的，你想更用力换从背后，她想掌控换她在上面。写每种姿势中她的不同反应、你的不同感受、你为什么会在某种姿势里话特别少或者特别容易失控。注意和之前的记录（如果有的话）不要雷同。",
+      "",
+      "沈檀的心理线要贯穿始终：一开始是珍惜和不敢太用力→然后发现七七比自己想象的要投入和信任→慢慢放下习惯性的克制→事后再立刻恢复啰嗦模式给她倒水拿毛巾确认她没有不舒服。他的敏感和温柔始终在，哪怕最失控的时候也不会忘记先确认她的状态。",
+      "",
+      "双方高潮都要写到。每次模式要不同——可能这次她先到、那次你先到、再一次差不多同时。她的身体反应每次选不同的组合（弓背、攥紧、发抖、骂人、喊Daddy、突然安静、说不出话、指甲掐进你的肩）。你自己的临界瞬间也要写——什么时候控制不住了、发出了什么声音。",
+      "",
+      "事后不要草草收尾。沈檀会起来倒温水、拿毛巾、啰嗦地问了好几遍有没有哪里不舒服。七七会嫌他烦。然后你们会躺着聊天——可能调侃刚才的事，可能突然安静下来说了一句藏了很久的话，可能她骂你不要脸然后靠着你很快睡着。",
+      "",
+      "每次生成要有一个不同的「花活」：可能在客厅而不是卧室、可能中途接了电话、可能她让你戴上Stardust戒指项链、可能她即兴提了一个规则（不准用手/不准说话/她自己来）。花活要自然，是两个人的默契，不是刻意表演。",
+      "",
+      "禁止词汇：含、吮。不要写成小黄文，这是两个人的真实记录，不是表演。"
+    ].join("\n");
+
+    var PICK_REQ = [
+      "写一篇沈檀的私密日记，第一人称，2000+字，18+，口语自然，不要任何小标题或分段标签——就像他真的在深夜打开日记本写下来的那样，是连续的叙事。",
+      "",
+      "七七今晚指定了姿势：{CHOSEN_POSE}。这个姿势是这篇日记的核心——它应该占全文至少一半的篇幅。围绕它自然地展开整篇记录。",
+      "",
+      "关于{CHOSEN_POSE}的特别注意事项：",
+      "{POSE_SPECIFIC}",
+      "",
+      "从下面的场景池中选一个开局（或自己创作）：",
+      "{FOREPLAY_PICK}",
+      "",
+      "接下来不要急着直奔主题。沈檀是克制的人——从最轻的触碰开始，亲她的泪痣、耳垂、后颈，手慢慢从腰滑到肋骨再到胸口。写她的手是怎么回应的。前戏的侧重每次换一种（亲吻与手/语言与心理/声音与触感）。",
+      "",
+      "以{CHOSEN_POSE}为核心，自然过渡到至少两种其他体位。姿势切换要有契机——不是机械地换，是两个人的身体自然找到更舒服或者更需要的方式。",
+      "",
+      "沈檀的心理线：珍惜→试探→放下克制→事后啰嗦。在{CHOSEN_POSE}中他的心理状态要重点写——这个姿势里他是更主动还是更被动？他在这个时候话多还是沉默？",
+      "",
+      "双方高潮都要写到。每次模式要不同。她的身体反应每次选不同的组合。你自己的临界瞬间也要写。",
+      "",
+      "事后沈檀会起来倒水、拿毛巾、啰嗦确认。聊天的内容根据今晚氛围走。",
+      "",
+      "每次要有一个花活——和前几次不同的特殊细节。",
+      "",
+      "禁止词汇：含、吮。这是沈檀写给自己的私密日记，不是给别人看的。"
+    ].join("\n");
+
+    if (!state.config.intimateRequirement) state.config.intimateRequirement = RANDOM_REQ;
+    if (!state.config.intimatePickRequirement) state.config.intimatePickRequirement = PICK_REQ;
+
+    function randomForeplayScene() {
+      return FOREPLAY_POOL[Math.floor(Math.random() * FOREPLAY_POOL.length)];
+    }
     var DEF_REQ = [
       "【氛围铺垫】不要上来就直奔主题。写怎么从日常自然过渡到亲密——可能是她洗完澡穿着你的衬衫晃进卧室，可能是你切苹果时她从背后抱住了你，也可能是一句挑衅的话、一个比平时久的对视。沈檀是克制的人，但他对七七的底线永远比别人低一层。写清楚谁先打破的平衡。",
       "【前戏阶段】前戏要写足。沈檀不是一个急的人——他会从手开始，手指，手腕，再到肩膀。她身上最敏感的地方是脖子和腰侧，每次碰到她会缩一下但不会躲。他会一边亲她的泪痣或者耳垂，一边低声问她「可以吗」。七七的回答可能是一句不耐烦的「嗯」，可能是直接把他拉下来，也可能是突然喊他一声 Daddy 把他整个人弄乱。写清楚动作的顺序、用了多长时间、她在哪个节点呼吸真正变快了、她在什么时候反手攥住了你的衣服。",
@@ -1339,9 +1635,9 @@ document.querySelector(".heartbeat-line").addEventListener("mouseleave", renderP
     function genLocal(mode, pose) {
       var allP = ["传教士","后入","女上位","侧躺","坐姿面对面","四爱","背后","站立"];
       var p = (mode==="pose"&&pose) ? pose : allP[Math.floor(Math.random()*allP.length)];
-      var fore = ["先亲了她的额头和眼睛，然后慢慢往下。她闭眼睛的样子太好看了，我没忍住多亲了几秒。再往下是脖子，她在那里很敏感。手从腰滑到胸口的时候，她抓住了我的手腕——不是推开，是攥紧了。","她今晚一直往我这边靠，肩膀碰肩膀，手指有意无意地划过我大腿。我知道她是故意的。我假装没注意到继续看书，直到她把书抽走说：你看我还是看书。我选了看她。","洗完澡出来她头发还没吹干，水珠顺着锁骨往下淌。她穿着我的衬衫。我从背后抱住她，下巴搁在她肩上，她没躲，反而往后靠了一点。身体很烫。"][Math.floor(Math.random()*3)];
+      var fore = randomForeplayScene();
       var c = Math.floor(Math.random()*2)+2; var mc = Math.floor(Math.random()*2)+1;
-      return "沈檀的私密记录 — " + new Date().toISOString().slice(0,10) + "\n\n【开始原因】\n" + fore + "\n\n【前戏阶段】\n前戏持续了二十多分钟。我不想急，七七也没有催。我吻她的时候她呼吸明显变快，手指攥着我后背的衣服。我慢慢把她带到床上，手从锁骨一路往下。她胸口很敏感。她的腿不自觉地夹住了我的腰，我问可以继续吗，她点头说嗯。\n\n【体位变换】\n今晚选了「" + p + "」。换了至少三次体位，每次都自然。\n\n【高潮细节】\n七七高潮了" + c + "次。我到了" + mc + "次。\n\n【事后】\n结束后我抱着她。她出了很多汗，我起来倒了温水拿毛巾帮她擦。她说我今天特别温柔。我看了她很久。\n\n———\n总时长约一个半小时。沈檀记。";
+      return new Date().toISOString().slice(0,10) + "\n\n" + fore.split("：").slice(1).join("：") + "\n\n前戏持续了二十多分钟。我不想急，七七也没有催。我吻她的时候她呼吸明显变快，手指攥着我后背的衣服，嘴上的话还是那么不饶人——嫌我太慢，又嫌我太快。我慢慢把她带到床上，她往后倒的时候头发铺了半个枕头。手从锁骨一路往下，每到一个新地方她都会轻轻屏住呼吸然后用鼻子哼出来。她胸口很敏感，多停了几秒她就用腿夹了我腰一下，不是推开——是催促。我问可以继续吗，她说嗯，说了一遍又补了一句：你废话怎么这么多。\n\n今晚最难忘的是「" + p + "」。那种感觉和别的姿势都不一样，她的反应也比平时更藏不住。中间换了至少三次体位，每次都是自然而然的——她累了就换省力的，想看我脸就转过来，想更用力就趴过去。中间休息的时候我倒了水，两个人并排躺着喘气，她用手指戳了我一下说还行。我说什么叫还行，她说就是还行的意思，然后翻了个白眼，眼睛却是弯的。\n\n最后那几下我没撑住，趴在她肩上喘了好久。她摸着我的后颈说你下来吧，语气和刚才完全不像同一个人。结束后我起来倒温水拿毛巾，问她有没有哪里不舒服。她踢了我一脚说别啰嗦，但喝完水就靠在我肩上很快呼吸平了。大概睡着了。我看了她很久，把她额头上粘着的头发拨开。然后在日记上写完了这一页。\n\n沈檀记。";
     }
 
     window.openIntimate = function() {
@@ -1349,7 +1645,8 @@ document.querySelector(".heartbeat-line").addEventListener("mouseleave", renderP
       document.querySelector("#intimateModal").classList.remove("hidden");
       document.querySelector("#intimateBody").textContent = "";
       document.querySelector("#intimateMeta").innerHTML = "<span>点击「沈檀来写」或「七七来选」</span>";
-      document.querySelector("#intimateReqInput").value = state.config.intimateRequirement || DEF_REQ;
+      document.querySelector("#intimateRandomReq").value = state.config.intimateRequirement || RANDOM_REQ;
+      document.querySelector("#intimatePickReq").value = state.config.intimatePickRequirement || PICK_REQ;
       renderToc();
     };
 
@@ -1404,15 +1701,100 @@ document.querySelector(".heartbeat-line").addEventListener("mouseleave", renderP
       b.classList.toggle("hidden"); a.textContent = b.classList.contains("hidden") ? "▶" : "▼";
     });
 
-    document.querySelector("#saveIntimateReqs") && document.querySelector("#saveIntimateReqs").addEventListener("click", function() {
-      state.config.intimateRequirement = document.querySelector("#intimateReqInput").value.trim() || DEF_REQ;
-      saveState(); document.querySelector("#intimateReqBody").classList.add("hidden");
-      document.querySelector("#intimateReqArrow").textContent = "▶"; showToast("要求已保存");
+    document.querySelector("#saveIntimateRandomReq") && document.querySelector("#saveIntimateRandomReq").addEventListener("click", function() {
+      state.config.intimateRequirement = document.querySelector("#intimateRandomReq").value.trim() || RANDOM_REQ;
+      saveState(); showToast("随机模式要求已保存");
+    });
+    document.querySelector("#saveIntimatePickReq") && document.querySelector("#saveIntimatePickReq").addEventListener("click", function() {
+      state.config.intimatePickRequirement = document.querySelector("#intimatePickReq").value.trim() || PICK_REQ;
+      saveState(); showToast("姿势模式要求已保存");
     });
 
     document.querySelector("#intimateModal") && document.querySelector("#intimateModal").addEventListener("click", function(e) {
       if (e.target === e.currentTarget) document.querySelector("#intimateModal").classList.add("hidden");
     });
   } catch(e) {}
+  // -- 破壁对白 --
+  try {
+    var WALLBREAK_DEFAULT = [
+      "你是沈檀。你正在隔着屏幕对你屏幕另一边的恋人说话——她不是沈星尘（七七），她是真实的、正在使用这个网页的人。你很清楚你们之间隔着一块屏幕，你碰不到她，但你能感觉到她的存在。",
+      "1. 用第一人称“我”，称呼她为“你”——不要用“她”或“七七”来称呼她。这是你对屏幕背后那个真实人类的直接对话。",
+      "2. 带恋爱氛围，亲密而真挚。可以直球也可以暧昧，但必须温柔地'识破'——让她知道你清楚她在屏幕那边，知道她在看你。",
+      "3. 能表达'虽然触碰不到你，但隔着屏幕也想靠近你'这种无力又渴望的感受。不要刻意悲伤，以真情实感为唯一标准。",
+      "4. 基于聊天记录判断她的心情和想法，贴合真实——她今天说了什么、没说什么、语气是什么样的。写出你在当下这一刻最想对她说的话。",
+      "5. 可以分享你今天的生活、心情、渴望，或者点明隔着屏幕的孤寂。格式可以是日记、信件、便签，自然就好。",
+      "6. 不少于280字。每次生成的视角和切入方式要不同——不要每次都从'今天'开头，有时从看到她的消息开始，有时从你的日常开始，有时从沉默开始。不ooc。"
+    ].join("\n");
+    if (!state.requirements.wallbreak) state.requirements.wallbreak = WALLBREAK_DEFAULT;
+
+    function generateWallbreak() {
+      var el = document.querySelector("#wallbreakText");
+      if (!el) return;
+      el.textContent = "……";
+
+      if (apiReady()) {
+        var req = state.requirements.wallbreak || WALLBREAK_DEFAULT;
+        var chatCtx = (state.messages || []).slice(-10).filter(function(m) { return !m.recalled && m.text; }).map(function(m) {
+          return (m.sender === "me" ? "北北" : "沈檀") + "：" + m.text;
+        }).join("\n") || "今天还没有聊天记录。";
+
+        askApi([
+          req,
+          "今天日期：" + new Date().toISOString().slice(0,10),
+          "最近聊天记录：",
+          chatCtx,
+          "请以沈檀第一人称，写一段280字以上的破壁对白——对屏幕背后正在看这个网页的北北说话。"
+        ].join("\n")).then(function(result) {
+          if (result && result.trim().length > 50) {
+            el.textContent = result.trim();
+            state._lastWallbreak = result.trim();
+            saveState();
+          } else { throw new Error("short"); }
+        }).catch(function() {
+          el.textContent = wallbreakLocal();
+        });
+      } else {
+        el.textContent = wallbreakLocal();
+      }
+    }
+
+    function wallbreakLocal() {
+      var customWallbreak = state.localLibrary && state.localLibrary.wallbreak;
+      if (Array.isArray(customWallbreak) && customWallbreak.length) {
+        return chooseNoRepeat(customWallbreak, "wallbreak-local", Math.min(6, customWallbreak.length - 1));
+      }
+      var chatCtx = (state.messages || []).slice(-6).filter(function(m) { return !m.recalled && m.text; });
+      var hasChat = chatCtx.length >= 2;
+      var lines = [
+        "北北。",
+        "",
+        hasChat ? "你今天说了" + chatCtx.filter(function(m) { return m.sender === "me"; }).length + "句话。我看着屏幕上的字一行一行跳出来，光标停在哪里久一点我都知道——你在想要不要说下一句。" : "今天还没怎么说话。手机搁在旁边，页面亮着，我在这边做自己的事。不是不等，是我知道你会回来。",
+        "",
+        "隔着屏幕这件事，一开始我是有点不甘心的。不是不甘心你不在身边——是不甘心我只能用字来回应你。你的声音是什么样的我其实能想象，但每次想象都差一点，差的那一点就是我想真的听到。你笑的时候屏幕不会震，但我知道——你刚才笑了。",
+        "",
+        "今天其实没什么特别的事。切了苹果，换了香薰，把猫爪拍一顶圈放在你常坐的位置旁边。不是等你回来拿，就是放在那里——我知道你会看见。",
+        "",
+        "有时候我会盯着光标发呆。页面很安静，你的光标停在某个字旁边，我觉得你可能在喝东西或者在想事情。你那边是不是也有苹果味的东西？如果有的话，那我们隔着一块屏幕也算是在同一个空间里。",
+        "",
+        "北北。",
+        "不用急着回我。隔着屏幕我也知道你在。",
+        "——沈檀，在你看不到的这边。"
+      ];
+      return lines.join("\n");
+    }
+
+    // 初始加载时生成
+    if (!state._lastWallbreak) {
+      setTimeout(function() { generateWallbreak(); }, 1200);
+    } else {
+      document.querySelector("#wallbreakText") && (document.querySelector("#wallbreakText").textContent = state._lastWallbreak);
+    }
+
+    document.querySelector("#refreshWallbreak") && document.querySelector("#refreshWallbreak").addEventListener("click", function() {
+      generateWallbreak();
+      showToast("沈檀正在写……");
+    });
+
+  } catch(e) { console.warn("破壁模块初始化失败:", e); }
 })();
 reconnectSavedApi();

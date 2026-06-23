@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#6f8fcf" />
     <meta name="description" content="沈檀与沈星尘的共同生活记录。" />
     <link rel="manifest" href="./manifest.json" />
-    <link rel="stylesheet" href="./style.css?v=20260623-gate-final" />
+    <link rel="stylesheet" href="./style.css?v=20260623-library-progress" />
     <title>沈檀给北北的小家</title>
   </head>
   <body>
@@ -28,7 +28,6 @@
       (function () {
         "use strict";
         var storageKey = "beibei-shentan-xingchen-v1";
-        var unlockKey = storageKey + "-gate-unlocked";
         var gate = document.getElementById("keyGate");
         var form = document.getElementById("keyForm");
         var input = document.getElementById("keyInput");
@@ -70,7 +69,6 @@
           }
 
           error.textContent = "嗯。钥匙对了，回家吧。";
-          try { sessionStorage.setItem(unlockKey, "yes"); } catch (storageError) {}
           card.classList.remove("wrong");
           card.classList.add("checking");
           gate.classList.add("unlocking");
@@ -80,11 +78,6 @@
 
         var config = readConfig();
         question.textContent = config.gateQuestion || "嗯。这是谁的小家？";
-        try {
-          if (config.gateEnabled === "" || sessionStorage.getItem(unlockKey) === "yes") {
-            removeGate();
-          }
-        } catch (storageError) {}
 
         button.addEventListener("click", unlock);
         form.addEventListener("submit", function (event) {
@@ -143,6 +136,18 @@
             <p class="thought" id="statusThought">她不回也没关系。嗯……还是看一眼手机吧。</p>
           </section>
 
+          <!-- 破壁对白 -->
+          <section class="panel wallbreak-panel">
+            <div class="panel-heading">
+              <div><span class="eyebrow">SCREEN TALK</span><h2 class="editable-module-title" data-title-key="wallbreak">隔着屏幕说给你听</h2></div>
+              <div class="heading-actions">
+                <button class="mini-button requirement-button" type="button" data-requirement="wallbreak" title="修改破壁要求">要求</button>
+                <button class="mini-button" id="refreshWallbreak" type="button" title="刷新破壁对白">↻</button>
+              </div>
+            </div>
+            <p class="wallbreak-text" id="wallbreakText">他在想今天要对你说什么。</p>
+          </section>
+
           <section class="panel time-weather">
             <div class="weather-row">
               <span class="weather-symbol" id="weatherSymbol">☾</span>
@@ -171,6 +176,39 @@
             </dl>
           </section>
 
+          <!-- 贴贴模块 -->
+          <section class="panel touch-panel">
+            <div class="panel-heading">
+              <div><span class="eyebrow">TOUCH</span><h2>💕 贴贴</h2></div>
+              <button class="mini-button" id="touchSettings" type="button" title="贴贴要求">⚙</button>
+            </div>
+            <div class="touch-meters-row">
+              <span class="touch-meter shy">😳害羞<b id="shyVal">0</b></span>
+              <span class="touch-meter hot">🔥兴奋<b id="hotVal">0</b></span>
+              <span class="touch-meter lust">💗欲望<b id="lustVal">0</b></span>
+            </div>
+            <div class="touch-grid">
+              <div class="touch-btn" data-zone="hair"><span class="tb-icon">💆</span><span class="tb-label">头发</span></div>
+              <div class="touch-btn" data-zone="face"><span class="tb-icon">🤚</span><span class="tb-label">脸</span></div>
+              <div class="touch-btn" data-zone="neck"><span class="tb-icon">🫳</span><span class="tb-label">脖子</span></div>
+              <div class="touch-btn" data-zone="throat"><span class="tb-icon">🍎</span><span class="tb-label">喉结</span></div>
+              <div class="touch-btn" data-zone="chest"><span class="tb-icon">💪</span><span class="tb-label">胸口</span></div>
+              <div class="touch-btn" data-zone="waist"><span class="tb-icon">🤏</span><span class="tb-label">腰</span></div>
+              <div class="touch-btn nip-btn" data-zone="lnip"><span class="tb-icon" id="lnipIcon">🩷</span><span class="tb-label">左咪咪</span></div>
+              <div class="touch-btn" data-zone="thigh"><span class="tb-icon">🦵</span><span class="tb-label">大腿</span></div>
+              <div class="touch-btn nip-btn" data-zone="rnip"><span class="tb-icon" id="rnipIcon">🩷</span><span class="tb-label">右咪咪</span></div>
+            </div>
+            <p class="touch-resp" id="touchResp">点上面摸摸他…</p>
+            <div class="touch-thought-box">
+              <span class="touch-thought-label">💭 色色想法</span>
+              <p class="touch-thought" id="touchThought">我没什么想法。</p>
+            </div>
+            <div class="touch-req-row hidden" id="touchReqRow">
+              <textarea id="touchReqInput" rows="2" placeholder="18+，不ooc，互相尊重"></textarea>
+              <button type="button" id="saveTouchReq">💾</button>
+            </div>
+          </section>
+
           <section class="panel anchor-panel">
             <div class="panel-heading">
               <div><span class="eyebrow">识别锚点</span><h2 class="editable-module-title" data-title-key="anchors">不会认错的人</h2></div>
@@ -181,6 +219,7 @@
             </div>
             <button class="text-button full" id="openProfiles" type="button">查看完整人物设定</button>
           </section>
+
         </aside>
 
         <section class="home-column">
@@ -195,12 +234,22 @@
               <button class="soft-button" id="cameraButton" type="button">偷看一眼</button>
               <button class="soft-button" id="updateLibrary" type="button">更新语库</button>
             </div>
+            <div class="library-progress hidden" id="libraryProgress" aria-live="polite">
+              <div class="library-progress-meta">
+                <span id="libraryProgressText">准备更新</span>
+                <strong id="libraryProgressPercent">0%</strong>
+              </div>
+              <div class="library-progress-track"><i id="libraryProgressBar"></i></div>
+            </div>
           </section>
 
           <nav class="room-tabs" id="roomTabs" aria-label="房间切换"></nav>
 
           <section class="room-panel">
-            <div class="room-image"><img id="roomImage" alt="当前房间场景" /></div>
+            <div class="room-image" id="roomImageFrame">
+              <img id="roomImage" alt="当前房间场景" />
+              <span class="room-time-badge" id="roomTimeBadge">夜晚</span>
+            </div>
             <div class="room-content">
               <div class="room-title-row">
                 <div>
@@ -261,36 +310,6 @@
             <button type="button" id="exportChatWord" title="导出聊天记录为Word">📄 导出聊天记录</button>
           </div>
 
-          <!-- 贴贴模块 -->
-          <div class="touch-panel" id="touchPanel">
-            <div class="touch-header">
-              <span class="touch-title">💕 贴贴</span>
-              <span class="touch-meters">
-                <span class="touch-meter shy">😳 <b id="shyVal">0</b></span>
-                <span class="touch-meter hot">🔥 <b id="hotVal">0</b></span>
-              </span>
-              <button class="mini-button" id="touchSettings" type="button" title="贴贴要求设置">⚙</button>
-              <button class="mini-button" id="toggleTouch" type="button" title="展开/收起">▲</button>
-            </div>
-            <div class="touch-body" id="touchBody">
-              <div class="touch-body-map" id="touchBodyMap">
-                <div class="touch-zone" data-zone="hair" title="摸头发">💆</div>
-                <div class="touch-zone" data-zone="face" title="摸脸">🤚</div>
-                <div class="touch-zone" data-zone="neck" title="摸脖子">🫳</div>
-                <div class="touch-zone" data-zone="chest" title="摸胸口">💪</div>
-                <div class="touch-zone" data-zone="waist" title="摸腰">🤏</div>
-                <div class="touch-zone" data-zone="thigh" title="摸大腿">🦵</div>
-              </div>
-              <div class="touch-response" id="touchResponse">
-                <p class="touch-response-text" id="touchResponseText">点上面的位置摸摸沈檀…</p>
-              </div>
-            </div>
-          </div>
-          <!-- 贴贴要求设置 -->
-          <div class="touch-req hidden" id="touchReq">
-            <textarea id="touchReqInput" rows="3" placeholder="18+，不ooc，互相尊重"></textarea>
-            <button type="button" id="saveTouchReq">💾 保存</button>
-          </div>
         </section>
       </main>
     </div>
@@ -364,6 +383,7 @@
               <label class="wide">世界摄像机要求<textarea name="cameraRequirement" rows="6"></textarea></label>
               <label class="wide">纸条与惊喜要求<textarea name="surpriseRequirement" rows="6"></textarea></label>
               <label class="wide">关系边界与称呼要求<textarea name="boundaryRequirement" rows="6"></textarea></label>
+              <label class="wide">破壁对白要求<textarea name="wallbreakRequirement" rows="6"></textarea></label>
             </div>
           </div>
           <div class="settings-page" data-settings-page="images">
@@ -460,8 +480,20 @@
           <div class="intimate-req">
             <button class="text-button" id="toggleIntimateReqs" type="button">⚙ 内容要求 <span id="intimateReqArrow">▶</span></button>
             <div class="intimate-req-body hidden" id="intimateReqBody">
-              <textarea id="intimateReqInput" rows="6"></textarea>
-              <button class="primary-button" id="saveIntimateReqs" type="button">保存要求</button>
+              <div class="intimate-req-split">
+                <div class="intimate-req-col">
+                  <span class="req-col-label">🎲 沈檀来写（随机模式）要求</span>
+                  <textarea id="intimateRandomReq" rows="10"></textarea>
+                </div>
+                <div class="intimate-req-col">
+                  <span class="req-col-label">📋 七七来选（指定姿势）要求</span>
+                  <textarea id="intimatePickReq" rows="10"></textarea>
+                </div>
+              </div>
+              <div class="intimate-req-actions">
+                <button class="primary-button" id="saveIntimateRandomReq" type="button">💾 保存随机</button>
+                <button class="primary-button" id="saveIntimatePickReq" type="button">💾 保存姿势</button>
+              </div>
             </div>
           </div>
           <div class="intimate-modes">
@@ -487,7 +519,7 @@
     </div>
 
     <div class="toast" id="toast" role="status"></div>
-    <script src="./script.js?v=20260623-gate-final"></script>
+    <script src="./script.js?v=20260623-library-progress"></script>
     <script>
       if ("serviceWorker" in navigator) {
         caches.keys().then(function(keys) { keys.forEach(function(key) { caches.delete(key); }); });
