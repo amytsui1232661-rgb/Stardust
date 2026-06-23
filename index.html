@@ -6,8 +6,8 @@
     <meta name="theme-color" content="#6f8fcf" />
     <meta name="description" content="沈檀与沈星尘的共同生活记录。" />
     <link rel="manifest" href="./manifest.json" />
-    <link rel="stylesheet" href="./style.css?v=20260618-7" />
-    <title>沈檀给北北的夜灯</title>
+    <link rel="stylesheet" href="./style.css?v=20260621-gate-rewrite" />
+    <title>沈檀给北北的小家</title>
   </head>
   <body>
     <div class="key-gate" id="keyGate">
@@ -29,7 +29,7 @@
       <header class="topbar">
         <div>
           <p class="kicker">STARDUST HOME</p>
-          <h1>沈檀给北北的夜灯</h1>
+          <h1>沈檀给北北的小家</h1>
         </div>
         <div class="top-actions">
           <span class="live-pill"><i></i><span id="connectionMini">本地模式</span></span>
@@ -146,6 +146,7 @@
             <div class="section-heading">
               <div><span class="eyebrow">LIFE FEED</span><h2 class="editable-module-title" data-title-key="cameraLog">沈檀的生活切片</h2></div>
               <div class="heading-actions">
+                <button class="mini-button" id="exportCameraLog" type="button" title="导出全部切片">📄</button>
                 <button class="mini-button requirement-button" type="button" data-requirement="camera">要求</button>
                 <button class="mini-button" id="addCameraLog" type="button">＋</button>
               </div>
@@ -162,8 +163,16 @@
             <button class="mini-button requirement-button" type="button" data-requirement="chat">要求</button>
           </header>
           <div class="chat-tools">
-            <button id="showHiddenMessages" type="button">显示隐藏消息</button>
-            <button id="clearChat" type="button">清空聊天</button>
+            <span class="floor-label">🏢 楼层</span>
+            <input type="number" id="floorFrom" min="1" placeholder="从" title="起始楼层" />
+            <span class="floor-sep">–</span>
+            <input type="number" id="floorTo" min="1" placeholder="到" title="结束楼层" />
+            <button type="button" id="applyFloorHide" title="隐藏指定楼层">🙈 隐藏</button>
+            <button type="button" id="applyFloorShow" title="显示指定楼层">👁 显示</button>
+            <button type="button" id="showAllFloors" title="显示全部楼层">📋 全部</button>
+            <button type="button" id="showHiddenMessages">显示隐藏消息</button>
+            <button type="button" id="clearChat">清空聊天</button>
+            <span class="floor-info" id="floorInfo"></span>
           </div>
           <div class="messages" id="messages" aria-live="polite"></div>
           <form class="composer" id="chatForm">
@@ -172,6 +181,40 @@
             <button type="submit">发送</button>
           </form>
           <div class="emoji-tray hidden" id="emojiTray"></div>
+          <div class="export-bar">
+            <button type="button" id="exportChatWord" title="导出聊天记录为Word">📄 导出聊天记录</button>
+          </div>
+
+          <!-- 贴贴模块 -->
+          <div class="touch-panel" id="touchPanel">
+            <div class="touch-header">
+              <span class="touch-title">💕 贴贴</span>
+              <span class="touch-meters">
+                <span class="touch-meter shy">😳 <b id="shyVal">0</b></span>
+                <span class="touch-meter hot">🔥 <b id="hotVal">0</b></span>
+              </span>
+              <button class="mini-button" id="touchSettings" type="button" title="贴贴要求设置">⚙</button>
+              <button class="mini-button" id="toggleTouch" type="button" title="展开/收起">▲</button>
+            </div>
+            <div class="touch-body" id="touchBody">
+              <div class="touch-body-map" id="touchBodyMap">
+                <div class="touch-zone" data-zone="hair" title="摸头发">💆</div>
+                <div class="touch-zone" data-zone="face" title="摸脸">🤚</div>
+                <div class="touch-zone" data-zone="neck" title="摸脖子">🫳</div>
+                <div class="touch-zone" data-zone="chest" title="摸胸口">💪</div>
+                <div class="touch-zone" data-zone="waist" title="摸腰">🤏</div>
+                <div class="touch-zone" data-zone="thigh" title="摸大腿">🦵</div>
+              </div>
+              <div class="touch-response" id="touchResponse">
+                <p class="touch-response-text" id="touchResponseText">点上面的位置摸摸沈檀…</p>
+              </div>
+            </div>
+          </div>
+          <!-- 贴贴要求设置 -->
+          <div class="touch-req hidden" id="touchReq">
+            <textarea id="touchReqInput" rows="3" placeholder="18+，不ooc，互相尊重"></textarea>
+            <button type="button" id="saveTouchReq">💾 保存</button>
+          </div>
         </section>
       </main>
     </div>
@@ -317,10 +360,70 @@
       </section>
     </div>
 
+    <!-- 色色记录弹窗（仅卧室可进） -->
+    <div class="modal-backdrop hidden" id="intimateModal">
+      <section class="modal intimate-modal" role="dialog" aria-modal="true">
+        <div class="intimate-sidebar">
+          <div class="intimate-sidebar-header">
+            <h3>📒 收录记录</h3>
+            <span style="font-size:10px;color:var(--muted);">外人不可见</span>
+          </div>
+          <div class="intimate-toc scroll-box" id="intimateToc">
+            <p class="intimate-empty">还没有收录，生成一篇吧。</p>
+          </div>
+        </div>
+        <div class="intimate-page">
+          <header class="intimate-header">
+            <h2>📒 沈檀的私密记录</h2>
+            <button class="icon-button" id="closeIntimate" type="button">×</button>
+          </header>
+          <div class="intimate-meta" id="intimateMeta"></div>
+          <div class="intimate-body scroll-box" id="intimateBody">
+            <p class="intimate-empty">点击「生成新篇」让沈檀写一段只给七七看的记录。</p>
+          </div>
+          <div class="intimate-req">
+            <button class="text-button" id="toggleIntimateReqs" type="button">⚙ 内容要求 <span id="intimateReqArrow">▶</span></button>
+            <div class="intimate-req-body hidden" id="intimateReqBody">
+              <textarea id="intimateReqInput" rows="6"></textarea>
+              <button class="primary-button" id="saveIntimateReqs" type="button">保存要求</button>
+            </div>
+          </div>
+          <div class="intimate-modes">
+            <button id="genIntimateRandom" type="button">🎲 沈檀来写</button>
+            <button id="genIntimatePick" type="button">📋 七七来选</button>
+            <div class="intimate-pick-poses hidden" id="intimatePickPoses">
+              <span class="pose-label">选一个姿势：</span>
+              <button data-pose="传教士">传教士</button>
+              <button data-pose="后入">后入</button>
+              <button data-pose="女上位">女上位</button>
+              <button data-pose="侧躺">侧躺</button>
+              <button data-pose="坐姿面对面">坐姿</button>
+              <button data-pose="四爱">四爱</button>
+              <button data-pose="背后">背后</button>
+              <button data-pose="站立">站立</button>
+            </div>
+          </div>
+          <footer class="intimate-footer">
+            <button id="saveIntimate" type="button">💾 收录此篇</button>
+          </footer>
+        </div>
+      </section>
+    </div>
+
     <div class="toast" id="toast" role="status"></div>
-    <script src="./script.js?v=20260618-7"></script>
+    <script src="./gate.js?v=20260621-gate-rewrite"></script>
+    <script src="./script.js?v=20260621-gate-rewrite"></script>
     <script>
-      if ("serviceWorker" in navigator) navigator.serviceWorker.register("./sw.js?v=20260618-7");
+      // 强制清除所有旧 Service Worker 缓存
+      if ("serviceWorker" in navigator) {
+        caches.keys().then(function(keys) { keys.forEach(function(key) { caches.delete(key); }); });
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          regs.forEach(function(reg) { reg.unregister(); });
+        }).then(function() {
+          // 重新注册最新版本
+          navigator.serviceWorker.register("./sw.js?v=20260621-gate-rewrite");
+        });
+      }
     </script>
   </body>
 </html>

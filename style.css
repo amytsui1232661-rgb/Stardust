@@ -652,13 +652,26 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 .chat-header strong, .chat-header span { display: block; }
 .chat-header strong { font-size: 14px; }
 .chat-header span { margin-top: 2px; color: var(--muted); font-size: 10px; }
-.chat-tools { display: flex; gap: 5px; padding: 7px 9px; border-bottom: 1px solid #edf0f7; }
-.chat-tools button {
-  border: 0;
-  color: var(--muted);
-  background: transparent;
-  font-size: 10px;
+.chat-tools {
+  display: flex; align-items: center; gap: 5px;
+  padding: 7px 9px; border-bottom: 1px solid #edf0f7;
+  flex-wrap: wrap;
 }
+.chat-tools button {
+  border: 0; border-radius: 5px;
+  color: var(--muted); background: transparent;
+  font-size: 10px; padding: 3px 7px;
+  white-space: nowrap; cursor: pointer;
+}
+.chat-tools button:hover { background: rgba(111,143,207,0.1); color: var(--ink); }
+.floor-label { font-size: 10px; font-weight: 700; color: var(--ink); white-space: nowrap; }
+.floor-sep { color: var(--muted); font-size: 11px; }
+.chat-tools input[type="number"] {
+  width: 40px; padding: 3px 4px; text-align: center;
+  font-size: 11px; border: 1px solid #edf0f7; border-radius: 5px;
+  background: white; color: var(--ink);
+}
+.floor-info { font-size: 10px; color: var(--accent); font-weight: 700; margin-left: 4px; }
 .messages {
   min-height: 0;
   overflow-y: auto;
@@ -710,8 +723,171 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 }
 .composer > button:first-child { color: var(--blue-dark); background: #eef3fc; }
 .composer textarea { min-height: 38px; max-height: 100px; resize: none; }
-.emoji-tray { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; padding: 8px; border-top: 1px solid var(--line); }
-.emoji-tray button { border: 0; background: transparent; font-size: 18px; }
+.emoji-tray { display: grid; grid-template-columns: repeat(8, 1fr); gap: 4px; padding: 8px; border-top: 1px solid var(--line); max-height: 240px; overflow-y: auto; }
+.emoji-tray button { border: 0; background: transparent; font-size: 18px; padding: 4px; border-radius: 6px; cursor: pointer; }
+.emoji-tray button:hover { background: rgba(111,143,207,0.12); }
+.export-bar { padding: 7px 10px; border-top: 1px solid var(--line); text-align: right; }
+.export-bar button {
+  border: 1px solid var(--line); border-radius: 6px;
+  padding: 5px 12px; font-size: 11px; cursor: pointer;
+  color: var(--muted); background: white;
+}
+.export-bar button:hover { background: var(--accent); color: white; border-color: var(--accent); }
+
+/* 贴贴模块 */
+.touch-panel { border-top: 1px solid var(--line); background: #fdf8fc; }
+.touch-header {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 10px; cursor: pointer;
+}
+.touch-header:hover { background: rgba(111,143,207,0.04); }
+.touch-title { font-size: 13px; font-weight: 700; color: #c44; }
+.touch-meters { display: flex; gap: 8px; font-size: 11px; }
+.touch-meter.shy { color: #e8739e; }
+.touch-meter.hot { color: #e8584c; }
+.touch-meter b { font-size: 14px; }
+.touch-body { padding: 0 10px 10px; }
+.touch-body-map {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 8px; padding: 10px 0;
+}
+.touch-zone {
+  aspect-ratio: 1;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 12px; font-size: 32px; cursor: pointer;
+  background: linear-gradient(135deg, #fef0f5, #fff5f8);
+  border: 2px solid rgba(232,115,158,0.2);
+  transition: all 0.2s;
+  user-select: none;
+}
+.touch-zone:hover { border-color: rgba(232,115,158,0.5); transform: scale(1.05); background: #fff0f5; }
+.touch-zone:active { transform: scale(0.95); background: #ffe0eb; }
+.touch-response {
+  background: white; border-radius: 8px;
+  padding: 10px 12px; min-height: 40px;
+  border: 1px solid rgba(232,115,158,0.15);
+}
+.touch-response-text {
+  margin: 0; font-size: 13px; line-height: 1.7; color: var(--ink);
+  font-style: italic;
+}
+.touch-req {
+  padding: 8px 10px; display: flex; gap: 6px;
+  border-top: 1px solid rgba(232,115,158,0.15);
+  background: #fdf8fc;
+}
+.touch-req textarea {
+  flex: 1; border: 1px solid var(--line); border-radius: 6px;
+  padding: 6px 8px; font-size: 11px; resize: vertical;
+  font-family: inherit; min-height: 40px;
+}
+.touch-req button {
+  border: 0; border-radius: 6px; padding: 4px 10px;
+  font-size: 11px; cursor: pointer; color: white; background: var(--accent);
+  flex-shrink: 0; align-self: flex-end;
+}
+
+/* 色色记录弹窗 */
+.intimate-modal {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  grid-template-rows: minmax(0, 1fr);
+  max-width: 860px; width: 95vw; max-height: 85vh;
+  background: #fffaf7; border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.intimate-sidebar {
+  background: #fdf3ec; border-right: 1px solid rgba(200,120,80,0.12);
+  display: flex; flex-direction: column; min-height: 0;
+  border-radius: 14px 0 0 14px;
+}
+.intimate-sidebar-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 14px; border-bottom: 1px solid rgba(200,120,80,0.12);
+}
+.intimate-sidebar-header h3 { font-size: 13px; margin: 0; color: #b85; }
+.intimate-toc { flex: 1; padding: 8px; overflow-y: auto; }
+.intimate-toc-item {
+  padding: 8px 10px; border-radius: 6px; cursor: pointer;
+  font-size: 11px; color: var(--ink); line-height: 1.4;
+  border-bottom: 1px solid rgba(200,120,80,0.06);
+}
+.intimate-toc-item:hover { background: rgba(200,120,80,0.08); }
+.intimate-toc-item.active { background: rgba(200,120,80,0.16); font-weight: 700; }
+.intimate-toc-date { font-size: 10px; color: #b85; font-weight: 700; }
+.intimate-toc-summary { margin-top: 2px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.intimate-empty { color: var(--muted); text-align: center; padding: 24px 0; font-size: 12px; }
+
+.intimate-page {
+  display: flex; flex-direction: column; min-height: 0;
+  background: linear-gradient(160deg, #fffaf7, #fef5f0);
+  border-radius: 0 14px 14px 0;
+}
+.intimate-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid rgba(200,120,80,0.12);
+}
+.intimate-header h2 { font-size: 17px; margin: 0; color: #b85; }
+.intimate-meta {
+  padding: 8px 20px; font-size: 12px; color: var(--muted);
+  border-bottom: 1px solid rgba(200,120,80,0.06);
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.intimate-body {
+  flex: 1; padding: 18px 20px; overflow-y: auto;
+  font-size: 13px; line-height: 2; color: var(--ink);
+  white-space: pre-wrap;
+}
+.intimate-req { border-top: 1px solid rgba(200,120,80,0.1); }
+.intimate-req .text-button {
+  width: 100%; border: 0; padding: 8px 16px;
+  font-size: 12px; font-weight: 700; color: #b85;
+  background: rgba(200,120,80,0.04); cursor: pointer;
+  text-align: left;
+}
+.intimate-req-body { padding: 10px 16px; display: grid; gap: 8px; }
+.intimate-req-body textarea {
+  border: 1px solid var(--line); border-radius: 6px;
+  padding: 8px 10px; font-size: 12px; resize: vertical;
+  font-family: inherit; line-height: 1.6;
+}
+.intimate-modes {
+  display: flex; gap: 8px; padding: 10px 20px; flex-wrap: wrap;
+  border-top: 1px solid rgba(200,120,80,0.08);
+}
+.intimate-modes > button {
+  border: 0; border-radius: 8px; padding: 9px 18px;
+  font-weight: 700; cursor: pointer; font-size: 12px;
+  background: rgba(200,120,80,0.1); color: #b85;
+}
+.intimate-modes > button:hover { background: rgba(200,120,80,0.2); }
+.intimate-pick-poses {
+  width: 100%; display: flex; align-items: center; gap: 6px;
+  flex-wrap: wrap; padding: 6px 0;
+}
+.pose-label { font-size: 11px; color: var(--muted); margin-right: 4px; }
+.intimate-pick-poses button {
+  border: 1px solid rgba(200,120,80,0.2); border-radius: 6px;
+  padding: 5px 10px; font-size: 11px; cursor: pointer;
+  color: #b85; background: white;
+}
+.intimate-pick-poses button:hover { background: #b85; color: white; border-color: #b85; }
+
+.intimate-footer {
+  display: flex; gap: 8px; padding: 12px 20px;
+  border-top: 1px solid rgba(200,120,80,0.1);
+}
+.intimate-footer button {
+  border: 0; border-radius: 8px; padding: 9px 18px;
+  font-weight: 700; cursor: pointer; font-size: 12px;
+  background: #b85; color: white;
+}
+
+@media (max-width: 700px) {
+  .intimate-modal { grid-template-columns: 1fr; grid-template-rows: auto 1fr; max-height: 95vh; }
+  .intimate-sidebar { border-radius: 14px 14px 0 0; max-height: 120px; border-right: 0; border-bottom: 1px solid rgba(200,120,80,0.12); }
+  .intimate-page { border-radius: 0 0 14px 14px; }
+}
 
 .modal-backdrop {
   position: fixed;

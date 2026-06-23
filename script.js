@@ -36,7 +36,7 @@ const profileText = {
 };
 
 const defaultConfig = {
-  siteTitle: "沈檀给北北的夜灯",
+  siteTitle: "沈檀给北北的小家",
   userName: "北北",
   userRoleName: "沈星尘",
   charName: "沈檀",
@@ -58,12 +58,12 @@ const defaultConfig = {
   apiKey: "",
   model: "deepseek-chat",
   maxReplyCount: "6",
-  chatRequirement: "所有角色回复开头必须带“（测试）”。沈檀称呼沈星尘为“七七”，常用简短的“嗯”。口语、克制、温柔，不使用文绉绉或学术词。沈檀会有自己的情绪与生活，不盲从。沈星尘不回消息时不连环催，但会敏感地反思是不是自己做错了。禁止称呼沈星尘为宝宝、老婆。沈檀知道北北正在屏幕另一边使用这个网站，可以偶尔自然提到屏幕、光标、刷新、网络、页面与她正在看他，形成男生亲手给女生留下网址并打破第四堵墙的感觉，但不要每句话都生硬重复。",
+  chatRequirement: "沈檀称呼沈星尘为“七七”，常用简短的“嗯”。口语、克制、温柔，不使用文绉绉或学术词。可以自然使用 emoji 表情表达情绪，但不要滥用。沈檀会有自己的情绪与生活，不盲从。沈星尘不回消息时不连环催，但会敏感地反思是不是自己做错了。禁止称呼沈星尘为宝宝、老婆。沈檀知道北北正在屏幕另一边使用这个网站，可以偶尔自然提到屏幕、光标、刷新、网络、页面与她正在看他，形成男生亲手给女生留下网址并打破第四堵墙的感觉，但不要每句话都生硬重复。",
   statusRequirement: "状态要展示沈檀独立、连续的生活线，包括心情、位置、穿搭、正在做什么与内心想法。不要全部围绕等待七七上线，也不要让沈星尘手动指定他的心理。",
   physiologyRequirement: "心跳根据沈檀当前状态轻微变化。身高、肩宽、胸围、腰围等没有明确人设数据时显示“未设定”，不擅自编造；用户可在设置中自行填写。",
-  roomsRequirement: "所有互动记录开头必须带“（测试）”。根据房间、时间和按钮内容生成具体生活片段。保留兄妹之间的复杂依赖、恶趣味、怨怼和关心，但避免空泛说教。每次尽量避免重复。沈檀知道北北通过网页点了房间互动，可以偶尔看向屏幕、发现光标或回应刷新动作。",
-  cameraRequirement: "所有镜头记录开头必须带“（测试）”。展示沈檀自己的生活线，包括工作、做饭、整理头发、看手机、吃糖、照顾猫爪装饰、想起七七等。不要把他写成只会等待沈星尘上线。镜头可以偶尔被沈檀察觉，让他知道北北正在屏幕另一侧偷看，但大多数时候仍是自然生活。",
-  surpriseRequirement: "所有纸条开头必须带“（测试）”。纸条可以冷淡、温柔、敏感、略显啰嗦或带一点被七七逗到的无奈，必须符合沈檀人设。",
+  roomsRequirement: "所有互动记录开头必须带“”。根据房间、时间和按钮内容生成具体生活片段。保留兄妹之间的复杂依赖、恶趣味、怨怼和关心，但避免空泛说教。每次尽量避免重复。沈檀知道北北通过网页点了房间互动，可以偶尔看向屏幕、发现光标或回应刷新动作。",
+  cameraRequirement: "所有镜头记录开头必须带“”。展示沈檀自己的生活线，包括工作、做饭、整理头发、看手机、吃糖、照顾猫爪装饰、想起七七等。不要把他写成只会等待沈星尘上线。镜头可以偶尔被沈檀察觉，让他知道北北正在屏幕另一侧偷看，但大多数时候仍是自然生活。",
+  surpriseRequirement: "所有纸条开头必须带“”。纸条可以冷淡、温柔、敏感、略显啰嗦或带一点被七七逗到的无奈，必须符合沈檀人设。",
   boundaryRequirement: "保留朋友创作的骨科关系设定与称呼，不删除或改写核心背景。互动可表达复杂亲密、占有欲、依赖、嫉妒与试探；不生成露骨性行为内容。",
   portraitUrl: "./assets/images/identity-still-life.png",
   livingImage: "./assets/images/rooms/living.png",
@@ -99,9 +99,9 @@ const rooms = {
   bedroom: {
     name: "卧室",
     position: "0% 100%",
-    title: ["各自的床，各自没睡", "蓝粉夜灯之间", "七七又不肯早睡"],
+    title: ["各自的床，各自没睡", "蓝粉小灯之间", "七七又不肯早睡"],
     description: ["两张床之间隔着床头柜，也隔着很多没讲完的旧事。", "沈檀那边的灯还亮着，像是在等七七先关灯。", "梳子搁在桌上，他记得七七一剪头发就会直接剪到肩。"],
-    actions: ["把夜灯调暗", "拿起长发梳", "丢一个枕头过去", "说今晚不想睡", "坐到他的床边", "突然把灯全部关掉"]
+    actions: ["把小灯调暗", "拿起长发梳", "丢一个枕头过去", "说今晚不想睡", "坐到他的床边", "突然把灯全部关掉", "📒 色色记录"]
   },
   balcony: {
     name: "阳台",
@@ -130,47 +130,47 @@ const shenTanDetailRules = {
 
 const localReplyBank = {
   normal: [
-    ["（测试）嗯。", "（测试）七七，你说。", "（测试）我在看。"],
-    ["（测试）消息看见了。", "（测试）刚才在忙，不是故意不回。", "（测试）嗯，现在可以慢慢说。"],
-    ["（测试）七七今天倒是肯理我。", "（测试）我没有意见。", "（测试）只是有一点意外。"]
+    ["嗯。", "七七，你说。", "我在看。"],
+    ["消息看见了。", "刚才在忙，不是故意不回。", "嗯，现在可以慢慢说。"],
+    ["七七今天倒是肯理我。", "我没有意见。", "只是有一点意外。"]
   ],
   upset: [
-    ["（测试）七七，是我哪里做得不对吗？", "（测试）你先别急着说没事。", "（测试）我会认真听。"],
-    ["（测试）嗯，我不追着问。", "（测试）但你不高兴这件事，我没办法当作没看见。", "（测试）等你愿意说。"],
-    ["（测试）如果是我让你不舒服了，你直接说。", "（测试）不用顾着我。", "（测试）七七的感受比较重要。"]
+    ["七七，是我哪里做得不对吗？", "你先别急着说没事。", "我会认真听。"],
+    ["嗯，我不追着问。", "但你不高兴这件事，我没办法当作没看见。", "等你愿意说。"],
+    ["如果是我让你不舒服了，你直接说。", "不用顾着我。", "七七的感受比较重要。"]
   ],
   apple: [
-    ["（测试）又是苹果。", "（测试）嗯，我知道你会喜欢。", "（测试）香薰已经换好了。"],
-    ["（测试）冰箱里有切好的苹果。", "（测试）没有催你吃。", "（测试）只是放在那里。"],
-    ["（测试）苹果手串落在书房了。", "（测试）我没动。", "（测试）七七自己来拿。"]
+    ["又是苹果。", "嗯，我知道你会喜欢。", "香薰已经换好了。"],
+    ["冰箱里有切好的苹果。", "没有催你吃。", "只是放在那里。"],
+    ["苹果手串落在书房了。", "我没动。", "七七自己来拿。"]
   ],
   daddy: [
-    ["（测试）……七七。", "（测试）你明知道这样喊我会停一下。", "（测试）有事就直说。"],
-    ["（测试）嗯。", "（测试）突然这么喊，通常没好事。", "（测试）说吧，又想怎么折腾我。"],
-    ["（测试）听见了。", "（测试）不用再喊第二遍。", "（测试）我在。"]
+    ["……七七。", "你明知道这样喊我会停一下。", "有事就直说。"],
+    ["嗯。", "突然这么喊，通常没好事。", "说吧，又想怎么折腾我。"],
+    ["听见了。", "不用再喊第二遍。", "我在。"]
   ],
   ignored: [
-    ["（测试）不想回就先不回。", "（测试）我不会连着发。", "（测试）晚一点记得让我知道你没事。"],
-    ["（测试）嗯，七七又消失了。", "（测试）我先去做饭。", "（测试）手机会放在旁边。"],
-    ["（测试）我没有生气。", "（测试）只是会想，是不是刚才哪句话说得不对。", "（测试）你回来再告诉我。"]
+    ["不想回就先不回。", "我不会连着发。", "晚一点记得让我知道你没事。"],
+    ["嗯，七七又消失了。", "我先去做饭。", "手机会放在旁边。"],
+    ["我没有生气。", "只是会想，是不是刚才哪句话说得不对。", "你回来再告诉我。"]
   ]
 };
 
 const cameraPieces = {
-  starts: ["（测试）镜头切到厨房，", "（测试）书房门没关严，", "（测试）阳台风有点大，", "（测试）客厅只亮着一盏灯，", "（测试）深夜镜头亮了一秒，", "（测试）午后的房间很安静，", "（测试）沈檀刚从外面回来，", "（测试）洗手台还有一点水汽，"],
+  starts: ["镜头切到厨房，", "书房门没关严，", "阳台风有点大，", "客厅只亮着一盏灯，", "深夜镜头亮了一秒，", "午后的房间很安静，", "沈檀刚从外面回来，", "洗手台还有一点水汽，"],
   actions: ["沈檀正在切苹果，刀落得很慢", "他把半扎的头发重新绑好", "他低头摸了摸戒指项链上的 Stardust", "他看完七七的消息，没有立刻打字", "他把一颗糖放到七七常坐的位置", "他删掉一长段话，最后只留下一个“嗯”", "他在处理自己的工作，神色很淡", "他把猫爪摆件转回正面"],
   endings: ["，然后继续做自己的事。", "，嘴角很轻地动了一下。", "，像在判断是不是自己又说错了话。", "，没有发现镜头已经亮过。", "，过了几秒还是看了一眼手机。", "，没有催七七回来。", "，房间里的灯被他调暗了一档。", "，这段生活没有因为没人看就停下来。"]
 };
 
 const surpriseBank = [
-  "（测试）七七，冰箱第二层有苹果。糖只能拿两颗。嗯，我知道你不会听。",
-  "（测试）戒指不是给别人看的。你不要也没关系，我戴着。",
-  "（测试）今天没催你回消息。只看了十三次手机，不算很多。",
-  "（测试）香薰换成苹果味了。不是特意，因为家里本来就该是这个味道。",
-  "（测试）如果你又想剪头发，先告诉我。不是拦你，我只是想记住长发最后一天。",
-  "（测试）七七不高兴的时候，我总觉得是我的错。你可以嫌我烦，但别让我猜太久。",
-  "（测试）我买了糖，也买了猫爪拍一顶圈。嗯，后者不是给我自己的。",
-  "（测试）你喊 Daddy 的时候最好是真的有事。算了，没事也可以。"
+  "七七，冰箱第二层有苹果。糖只能拿两颗。嗯，我知道你不会听。",
+  "戒指不是给别人看的。你不要也没关系，我戴着。",
+  "今天没催你回消息。只看了十三次手机，不算很多。",
+  "香薰换成苹果味了。不是特意，因为家里本来就该是这个味道。",
+  "如果你又想剪头发，先告诉我。不是拦你，我只是想记住长发最后一天。",
+  "七七不高兴的时候，我总觉得是我的错。你可以嫌我烦，但别让我猜太久。",
+  "我买了糖，也买了猫爪拍一顶圈。嗯，后者不是给我自己的。",
+  "你喊 Daddy 的时候最好是真的有事。算了，没事也可以。"
 ];
 
 const loginWallLines = [
@@ -202,12 +202,12 @@ function defaultState() {
     room: "living",
     apiConnected: false,
     messages: [
-      makeMessage("char", "（测试）七七，页面亮了。我知道是你。"),
-      makeMessage("char", "（测试）隔着屏幕也算回家。苹果切好了，放在冰箱第二层。")
+      makeMessage("char", "七七，页面亮了。我知道是你。"),
+      makeMessage("char", "隔着屏幕也算回家。苹果切好了，放在冰箱第二层。")
     ],
     cameraLog: [
-      makeLog("（测试）沈檀把手机屏幕扣下，去厨房切苹果。三分钟后又翻回来确认了一眼。"),
-      makeLog("（测试）他重新扎了头发。半扎，因为七七说这样比较好看。")
+      makeLog("沈檀把手机屏幕扣下，去厨房切苹果。三分钟后又翻回来确认了一眼。"),
+      makeLog("他重新扎了头发。半扎，因为七七说这样比较好看。")
     ],
     surprises: [],
     customTitles: {},
@@ -276,8 +276,8 @@ function chooseNoRepeat(list, key, windowSize = 8) {
 
 function prefixTest(text) {
   const clean = String(text || "").trim();
-  if (!clean) return "（测试）嗯。";
-  return clean.startsWith("（测试）") ? clean : `（测试）${clean}`;
+  if (!clean) return "嗯。";
+  return clean.startsWith("") ? clean : `${clean}`;
 }
 
 function splitReplies(text) {
@@ -289,7 +289,7 @@ function splitReplies(text) {
     .map((line) => line.trim())
     .filter(Boolean)
     .slice(0, maximum);
-  return lines.length ? lines.map(prefixTest) : ["（测试）嗯。"];
+  return lines.length ? lines.map(prefixTest) : ["嗯。"];
 }
 
 function getRoomName(key) {
@@ -327,14 +327,24 @@ function renderLoginWallLine() {
 }
 
 function renderKeyGate() {
-  const gate = document.querySelector("#keyGate");
-  const enabled = state.config.gateEnabled === "on";
-  document.querySelector("#keyQuestion").textContent = state.config.gateQuestion || "嗯。这是谁的小家？";
-  if (!enabled || sessionStorage.getItem(`${STORAGE_KEY}-unlocked`) === "yes") {
-    gate.classList.add("opened");
-  } else {
-    gate.classList.remove("opened");
-  }
+  try {
+    var gate = document.querySelector("#keyGate");
+    if (!gate) return console.warn("门禁元素不存在");
+    // 直接读 localStorage 和 sessionStorage，不走 state 合并
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch(e) {}
+    var gateEnabled = (saved.config && saved.config.gateEnabled) || defaultConfig.gateEnabled || "on";
+    var unlocked = sessionStorage.getItem(STORAGE_KEY + "-gate-unlocked") === "yes";
+    var question = (saved.config && saved.config.gateQuestion) || defaultConfig.gateQuestion || "嗯。这是谁的小家？";
+    var qEl = document.querySelector("#keyQuestion");
+    if (qEl) qEl.textContent = question;
+    console.log("[门禁] gateEnabled:", gateEnabled, "unlocked:", unlocked);
+    if (gateEnabled !== "on" || unlocked) {
+      gate.classList.add("opened");
+    } else {
+      gate.classList.remove("opened");
+    }
+  } catch(e) { console.error("[门禁] renderKeyGate 出错:", e); }
 }
 
 function renderCustomTitles() {
@@ -479,12 +489,12 @@ function generatedRoomLines(roomKey, action) {
   const room = rooms[roomKey] || rooms.living;
   const detail = chooseNoRepeat(shenTanDetailRules[roomKey] || shenTanDetailRules.living, `detail-${roomKey}`, 2);
   const openings = [
-    `（测试）七七在${room.name}里${action}，`,
-    `（测试）${action}的动静很轻，沈檀还是听见了，`,
-    `（测试）沈檀原本在做自己的事，看到七七${action}，`,
-    `（测试）${room.name}的灯晃了一下，七七刚刚${action}，`,
-    `（测试）沈檀没有立刻说话，只看了看七七${action}的地方，`,
-    `（测试）七七故意${action}，像是在等他先有反应，`
+    `七七在${room.name}里${action}，`,
+    `${action}的动静很轻，沈檀还是听见了，`,
+    `沈檀原本在做自己的事，看到七七${action}，`,
+    `${room.name}的灯晃了一下，七七刚刚${action}，`,
+    `沈檀没有立刻说话，只看了看七七${action}的地方，`,
+    `七七故意${action}，像是在等他先有反应，`
   ];
   const actions = [
     "他先确认她不是不舒服，才把语气放松一点",
@@ -508,6 +518,7 @@ function generatedRoomLines(roomKey, action) {
 }
 
 async function handleRoomAction(action) {
+  if (action === "📒 色色记录") { if (typeof openIntimate === "function") openIntimate(); return; }
   if (state.room === "camera" && action === "换一个镜头") {
     addCameraShot();
     return;
@@ -600,7 +611,7 @@ async function refreshStatus() {
   if (apiReady()) {
     try {
       const result = await askApi(`根据沈檀人设生成此刻状态，严格按“心情|位置|穿着|正在做|内心想法|心率整数”六段输出，不要编号。心率应符合当前情绪，通常在58到105之间。\n要求：${state.requirements.status}\n生理要求：${state.requirements.physiology}`);
-      const parts = result.replace(/^（测试）/, "").split("|").map((item) => item.trim()).filter(Boolean);
+      const parts = result.replace(/^/, "").split("|").map((item) => item.trim()).filter(Boolean);
       if (parts.length >= 5) {
         state.statusSnapshot = {
           mood: parts[0],
@@ -764,7 +775,7 @@ ${history}
 
 沈星尘刚说：${latest}
 
-请根据当前对话自然决定回复1到${state.config.maxReplyCount || 6}条适合微信分开发送的短句，不要为了凑数发满。每行一条，每条必须以（测试）开头。不要输出解释、编号或括号动作。`;
+请根据当前对话自然决定回复1到${state.config.maxReplyCount || 6}条适合微信分开发送的短句，不要为了凑数发满。每行一条，每条必须以开头。不要输出解释、编号或括号动作。`;
 }
 
 function apiReady() {
@@ -806,7 +817,7 @@ async function testApi() {
   status.textContent = "连接中…";
   try {
     state.apiConnected = true;
-    const reply = await askApi("只回复：（测试）连接成功");
+    const reply = await askApi("只回复：连接成功");
     if (!reply) throw new Error("empty");
     saveState();
     renderApiStatus("已连接");
@@ -829,7 +840,7 @@ async function reconnectSavedApi() {
   state.apiConnected = true;
   renderApiStatus("正在使用已保存的 DeepSeek 配置连接…");
   try {
-    const reply = await askApi("只回复：（测试）连接成功");
+    const reply = await askApi("只回复：连接成功");
     if (!reply) throw new Error("empty");
     saveState();
     renderApiStatus("已自动连接");
@@ -870,7 +881,7 @@ function renderSurprises() {
   list.innerHTML = "";
   const visible = state.surprises.filter((item) => showHidden || !item.hidden);
   if (!visible.length) {
-    list.innerHTML = `<article class="feed-item"><div><p>（测试）还没有拆开的纸条。点“再拆一张”看看沈檀留下了什么。</p></div></article>`;
+    list.innerHTML = `<article class="feed-item"><div><p>还没有拆开的纸条。点“再拆一张”看看沈檀留下了什么。</p></div></article>`;
     return;
   }
   visible.forEach((item) => {
@@ -906,7 +917,7 @@ async function updateLibrary() {
   button.textContent = "更新中…";
   if (apiReady()) {
     try {
-      const text = await askApi(`根据沈檀和沈星尘人设，生成6条互不重复的沈檀生活摄像机记录，每行一条，每条以（测试）开头。\n${state.requirements.camera}`);
+      const text = await askApi(`根据沈檀和沈星尘人设，生成6条互不重复的沈檀生活摄像机记录，每行一条，每条以开头。\n${state.requirements.camera}`);
       const lines = text.split(/\n+/).map(prefixTest).filter((line) => line.length > 8).slice(0, 6);
       lines.reverse().forEach((line) => state.cameraLog.unshift(makeLog(line)));
       showToast("语库已通过 API 更新");
@@ -1059,33 +1070,6 @@ function spawnKeyParticles() {
   }
 }
 
-document.querySelector("#keyForm").addEventListener("submit", (event) => {
-  event.preventDefault();
-  const card = document.querySelector(".key-card");
-  const gate = document.querySelector("#keyGate");
-  const input = document.querySelector("#keyInput");
-  const error = document.querySelector("#keyError");
-  const expected = String(state.config.gateAnswer || "北北").trim().toLowerCase();
-  const answer = input.value.trim().toLowerCase();
-  card.classList.remove("wrong");
-  card.classList.add("checking");
-  setTimeout(() => card.classList.remove("checking"), 720);
-  if (answer === expected) {
-    error.textContent = "嗯。钥匙对了，回家吧。";
-    sessionStorage.setItem(`${STORAGE_KEY}-unlocked`, "yes");
-    spawnKeyParticles();
-    gate.classList.add("unlocking");
-    setTimeout(() => {
-      gate.classList.add("opened");
-      gate.classList.remove("unlocking");
-    }, 820);
-  } else {
-    error.textContent = "不是这个答案。七七，再想一下。";
-    card.classList.add("wrong");
-    input.select();
-  }
-});
-
 document.querySelector("#roomTabs");
 document.querySelector("#refreshStatus").addEventListener("click", refreshStatus);
 document.querySelector("#cameraButton").addEventListener("click", addCameraShot);
@@ -1190,4 +1174,265 @@ setInterval(renderTimes, 1000);
 setInterval(renderPhysiology, 1800);
 document.querySelector(".heartbeat-line").addEventListener("mouseenter", renderPhysiology);
 document.querySelector(".heartbeat-line").addEventListener("mouseleave", renderPhysiology);
+
+/* ========== 以下为新增功能（不影响原有门禁） ========== */
+
+(function() {
+  // -- 标题改"小家" --
+  state.config.siteTitle = state.config.siteTitle.replace(/夜灯/g, "小家");
+
+  // -- 表情扩充 --
+  try {
+    var tray = document.querySelector("#emojiTray");
+    if (tray) {
+      tray.innerHTML = "";
+      ["😊","🥰","😘","😍","❤️","💕","💋","✨","😭","🥺","😢","😤","😠","🙄","😅","😂","🤗","🫂","💪","👍","👏","🙏","🌹","🎀","🍎","🍬","🐾","🌙","⭐","🔥","💧","🎵","💌","🫶","💝","💗","💓","💞","💘","🏠","嗯","……","Daddy","不理你","回来","想你","抱","乖"].forEach(function(e) {
+        var b = document.createElement("button"); b.type = "button"; b.textContent = e;
+        b.addEventListener("click", function() { var i = document.querySelector("#chatInput"); i.value += e; i.focus(); });
+        tray.appendChild(b);
+      });
+    }
+  } catch(e) {}
+
+  // -- 楼层隐藏/显示 --
+  try {
+    function updateFloorInfo() {
+      var fi = document.querySelector("#floorInfo"); if (!fi) return;
+      var fs = {}; state.messages.forEach(function(m) { fs[m.floor||1] = 1; });
+      var total = Object.keys(fs).length;
+      var hidden = state.messages.filter(function(m) { return m.hidden; }).length;
+      fi.textContent = hidden > 0 ? "共" + total + "楼 · " + hidden + "条隐藏" : "共" + total + "楼";
+    }
+    document.querySelector("#applyFloorHide") && document.querySelector("#applyFloorHide").addEventListener("click", function() {
+      var f = parseInt(document.querySelector("#floorFrom").value);
+      var t = parseInt(document.querySelector("#floorTo").value);
+      if (isNaN(f) || isNaN(t) || f < 1 || t < f) return showToast("楼层范围不对");
+      state.messages.forEach(function(m) { if (m.floor >= f && m.floor <= t) m.hidden = true; });
+      saveState(); renderMessages(); updateFloorInfo();
+      showToast("已隐藏第" + f + "楼到第" + t + "楼");
+    });
+    document.querySelector("#applyFloorShow") && document.querySelector("#applyFloorShow").addEventListener("click", function() {
+      var f = parseInt(document.querySelector("#floorFrom").value);
+      var t = parseInt(document.querySelector("#floorTo").value);
+      if (isNaN(f) || isNaN(t) || f < 1 || t < f) return showToast("楼层范围不对");
+      state.messages.forEach(function(m) { if (m.floor >= f && m.floor <= t) m.hidden = false; });
+      saveState(); renderMessages(); updateFloorInfo();
+      showToast("已显示第" + f + "楼到第" + t + "楼");
+    });
+    document.querySelector("#showAllFloors") && document.querySelector("#showAllFloors").addEventListener("click", function() {
+      state.messages.forEach(function(m) { m.hidden = false; });
+      showHidden = true;
+      var btn = document.querySelector("#showHiddenMessages"); if (btn) btn.textContent = "只看未隐藏";
+      saveState(); renderMessages(); updateFloorInfo();
+      showToast("已显示全部楼层");
+    });
+    updateFloorInfo();
+  } catch(e) {}
+
+  // -- 导出功能 --
+  try {
+    document.querySelector("#exportCameraLog") && document.querySelector("#exportCameraLog").addEventListener("click", function() {
+      var log = state.cameraLog || [];
+      var rows = log.filter(function(e) { return !e.hidden; }).map(function(e) {
+        return '<div style="border-left:3px solid #6f8fcf;padding:8px 12px;margin:6px 0;">' + (e.text||"") + '</div>';
+      }).join("");
+      var html = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>生活切片</title><style>body{font-family:"Microsoft YaHei",sans-serif;max-width:700px;margin:0 auto;padding:20px;}</style></head><body><h1>沈檀的生活切片</h1>' + rows + '</body></html>';
+      var b = new Blob([html], {type:"application/msword"});
+      var a = document.createElement("a"); a.href = URL.createObjectURL(b);
+      a.download = "生活切片_" + new Date().toISOString().slice(0,10) + ".doc";
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      showToast("切片已导出");
+    });
+    document.querySelector("#exportChatWord") && document.querySelector("#exportChatWord").addEventListener("click", function() {
+      var rows = (state.messages||[]).map(function(m) {
+        var sender = m.sender === "me" ? "北北" : "沈檀";
+        var bg = m.sender === "me" ? "background:#95EC69;float:right;" : "background:#fff;";
+        return '<div style="margin:8px 0;' + (m.sender==='me'?'text-align:right;':'')+'"><span style="font-size:10px;color:#999;">' + (m.time||"") + ' · ' + sender + ' · 第' + (m.floor||"?") + '楼</span><div style="display:inline-block;' + bg + 'border-radius:6px;padding:8px 12px;max-width:75%;font-size:14px;text-align:left;">' + (m.text||"") + '</div></div>';
+      }).join("");
+      var html = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>聊天记录</title><style>body{font-family:"Microsoft YaHei",sans-serif;max-width:700px;margin:0 auto;padding:20px;}</style></head><body><h1>聊天记录</h1>' + rows + '</body></html>';
+      var b = new Blob([html], {type:"application/msword"});
+      var a = document.createElement("a"); a.href = URL.createObjectURL(b);
+      a.download = "聊天记录_" + new Date().toISOString().slice(0,10) + ".doc";
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      showToast("聊天记录已导出");
+    });
+  } catch(e) {}
+
+  // -- 贴贴模块 --
+  try {
+    if (!state.config.touchRequirement) state.config.touchRequirement = "18+，不ooc，互相尊重";
+    var touchDB = {
+      hair: { low:["嗯……别弄乱。","头发有什么好摸的。"], mid:["……还挺舒服的。","别停。"], high:["七七，你这样我会控制不住的。","你再摸下去我就不装了。"] },
+      face: { low:["干嘛。","别碰脸。"], mid:["你的手好暖。","再摸一下。"], high:["七七，你摸我脸的时候我心跳好快。","脸都给你摸红了……满意了？"] },
+      neck: { low:["……脖子不行。","痒。"], mid:["嗯……很敏感。","你手好软，故意的吧。"], high:["你再碰一下脖子我就亲你。","七七……我整个人都被你点着了。"] },
+      chest: { low:["……手。","你碰哪儿呢。"], mid:["心跳很快吧，你感觉到了吗。","嗯……再往下一点也可以。"], high:["七七，你摸到我心跳了对吧。","你再按一下我就把你拉过来。"] },
+      waist: { low:["腰不行。","痒。"], mid:["嗯……腰比较敏感。","你手放在这里我没办法想别的。"], high:["腰被你摸软了，满意吗，七七。","我腰都给你了，你还想摸哪儿。"] },
+      thigh: { low:["……胆子不小。","大腿不行。"], mid:["嗯……再往上一点。","大腿肌肉在绷……感觉到了吗。"], high:["你再摸一下大腿我就受不了了。","腿都在抖了……七七你赢了好吧。"] }
+    };
+    var tShy = parseInt(localStorage.getItem("bb-touch-shy")||"0");
+    var tHot = parseInt(localStorage.getItem("bb-touch-hot")||"0");
+    document.querySelector("#shyVal") && (document.querySelector("#shyVal").textContent = tShy);
+    document.querySelector("#hotVal") && (document.querySelector("#hotVal").textContent = tHot);
+
+    document.querySelector("#toggleTouch") && document.querySelector("#toggleTouch").addEventListener("click", function() {
+      var b = document.querySelector("#touchBody"); b.classList.toggle("hidden");
+      this.textContent = b.classList.contains("hidden") ? "▼" : "▲";
+    });
+
+    document.querySelectorAll(".touch-zone").forEach(function(z) {
+      z.addEventListener("click", function() {
+        var zone = this.dataset.zone;
+        var names = {hair:"头发",face:"脸",neck:"脖子",chest:"胸口",waist:"腰",thigh:"大腿"};
+        var w = {hair:[3,2],face:[5,3],neck:[8,6],chest:[6,10],waist:[8,12],thigh:[10,15]};
+        var add = w[zone] || [3,3];
+        tShy = Math.min(100, tShy + add[0]); tHot = Math.min(100, tHot + add[1]);
+        localStorage.setItem("bb-touch-shy", tShy); localStorage.setItem("bb-touch-hot", tHot);
+        document.querySelector("#shyVal").textContent = tShy;
+        document.querySelector("#hotVal").textContent = tHot;
+        var hr = document.querySelector("#heartRate"); if (hr) hr.textContent = 72 + Math.round(tHot * 0.6);
+        var lvl = ((tShy+tHot)/2) < 25 ? "low" : ((tShy+tHot)/2) < 60 ? "mid" : "high";
+        var pool = touchDB[zone] && touchDB[zone][lvl] ? touchDB[zone][lvl] : ["嗯……"];
+        var resp = pool[Math.floor(Math.random() * pool.length)];
+        document.querySelector("#touchResponseText").textContent = resp;
+        state.cameraLog.unshift({ id: uid("log"), text: "💕 北北摸了沈檀的" + (names[zone]||zone) + " — 害羞" + tShy + " 兴奋" + tHot, time: nowTime(), hidden: false });
+        state.cameraLog = state.cameraLog.slice(0, 100);
+        saveState(); renderCameraLog();
+      });
+    });
+
+    document.querySelector("#touchSettings") && document.querySelector("#touchSettings").addEventListener("click", function() {
+      var r = document.querySelector("#touchReq"); r.classList.toggle("hidden");
+      document.querySelector("#touchReqInput").value = state.config.touchRequirement || "18+，不ooc，互相尊重";
+    });
+    document.querySelector("#saveTouchReq") && document.querySelector("#saveTouchReq").addEventListener("click", function() {
+      state.config.touchRequirement = document.querySelector("#touchReqInput").value.trim() || "18+，不ooc，互相尊重";
+      saveState(); document.querySelector("#touchReq").classList.add("hidden"); showToast("贴贴要求已保存");
+    });
+  } catch(e) {}
+
+  // -- 色色记录模块 --
+  try {
+    if (!state.intimateHistory) state.intimateHistory = [];
+    var _curIdx = -1;
+    var DEF_REQ = [
+      "【氛围铺垫】不要上来就直奔主题。写怎么从日常自然过渡到亲密——可能是她洗完澡穿着你的衬衫晃进卧室，可能是你切苹果时她从背后抱住了你，也可能是一句挑衅的话、一个比平时久的对视。沈檀是克制的人，但他对七七的底线永远比别人低一层。写清楚谁先打破的平衡。",
+      "【前戏阶段】前戏要写足。沈檀不是一个急的人——他会从手开始，手指，手腕，再到肩膀。她身上最敏感的地方是脖子和腰侧，每次碰到她会缩一下但不会躲。他会一边亲她的泪痣或者耳垂，一边低声问她「可以吗」。七七的回答可能是一句不耐烦的「嗯」，可能是直接把他拉下来，也可能是突然喊他一声 Daddy 把他整个人弄乱。写清楚动作的顺序、用了多长时间、她在哪个节点呼吸真正变快了、她在什么时候反手攥住了你的衣服。",
+      "【体位变换】至少写三种姿势，每种写到位——不仅仅是换个体位。写：为什么这个姿势被选中（她累了换省力的、她想看你的脸、她想主导、你想更用力、她想背过去不让你看表情等等），持续了多久，你在里面的心理感受和身体感觉分别是什么，她的反应有什么不同。姿势之间不要生硬跳跃，要有过渡——比如「后来她翻了个身」「她突然坐起来把我推倒」「我抱着她转了个方向」。",
+      "【沈檀心理线】贯穿全文必须有一条沈檀的内心线。沈檀不是普通的恋人——他有男妈妈属性、对七七的事谨慎到近乎啰嗦、她生气他会先认为是自己错了。在亲密过程中，他的心理应该是多层的：珍惜、想照顾、不敢太用力→发现她比自己想象的要投入和信任→慢慢放开自己习惯性的克制→事后立刻恢复啰嗦模式确认她有没有不舒服。他的敏感和温柔始终在，哪怕在最失控的时刻，他也会先确认她没事。",
+      "【高潮细节】双方高潮都要细写。七七的声音变化、身体语言（弓背、攥紧、发抖、骂人、喊Daddy、说不出话）、次数。沈檀自己的临界点和控制力——他什么时候控制不住了、发出什么声音、说了什么话。",
+      "【事后阶段】沈檀事后不会直接睡。他会起来倒温水、拿毛巾、确认了好几遍她有没有不舒服。七七嫌他啰嗦。他可能把她抱去浴室或者只是擦一下然后重新躺回去。会有对话——可能是关于刚才的调侃，可能是突然安静下来的认真话，可能是一句藏了很久的事。要写出这对兄妹恋人之间那种「什么都可以说、也有很多还没说」的微妙氛围。",
+      "【写作要求】沈檀第一人称。2000+字。18+坦诚，不回避不遮掩。尊重七七的意愿，她在过程中有拒绝权。口语自然，像沈檀真的在深夜打开日记本写了这一页。不要文艺腔、不要堆砌形容词、不要写成小黄文——这是两个人的真实记录，不是一个表演。禁止使用：含、吮。"
+    ].join("\n");
+    if (!state.config.intimateRequirement) state.config.intimateRequirement = DEF_REQ;
+
+    var POSE_REQS = {
+      "传教士": "【传教士体位 · 沈檀视角】她躺在下面的时候和平时的刁钻完全不一样——眼睛不知道该睁开还是该闭上，手一会儿抓枕头一会儿掐你后背。这个姿势最方便看清她的表情变化，也最容易突然停下来接吻。重点写：她的腿是怎么慢慢从平放变成环住你腰的；她什么时候开始主动抬头亲你的下巴；你在她上面的时候手撑在床单上的指节压出了什么弧度。这个姿势的亲密感在于你们从头到尾都没隔开过任何距离——近到她的呼吸直接落在你锁骨上，近到你左眼角的泪痣几乎蹭到她的睫毛。",
+      "后入": "【后入体位 · 沈檀视角】她趴着的时候会回头看你。那一眼没有什么温柔——更像是「你行不行」或者「再用力一点」。但耳朵是红的。你手扣着她的胯骨往前顶的时候，她的声音会闷进枕头里变成哼鸣。重点写：她腰和背脊连成的那条线——她骨架小但该有弧度的地方都有；她从枕头里侧着脸偶尔骂你一句（沈檀你慢点/不要停/你烦死了）；你俯下身贴着她后背，头发落到她肩膀上，在她耳边说的那些平时不太说的话。这个姿势最直接但也最容易上头——你要写出沈檀在其中既投入又时刻注意她身体信号的克制。",
+      "女上位": "【女上位体位 · 沈檀视角】她跨上来的时候表情很得意。她自己控制——深浅、角度、节奏——前面半分钟她还在找角度，皱着眉一副「怎么不对」的样子，然后突然找到了，整个人从眉毛到脚趾都安静下来。你在下面看她：她的头发散下来（到腰的长度扫在你胸口和大腿上），她膝盖夹着你的髋骨，手指按在你腹肌上借力。重点写：她主导时你是什么感觉——不是被动，是被选中的荣幸。你双手扶着她的腰帮她保持平衡，但节奏全听她的。她会偶尔低头跟你说一句「别动」，语气和平时叫你别啰嗦一模一样。",
+      "侧躺": "【侧躺体位 · 沈檀视角】两个人侧躺，你从背后抱她。这个姿势不急——不像其他姿势有明确的「开始」和「结束」，它更像是一段漫长的靠近。你的胸口贴着她的后背，能感觉到她的心跳从脊椎传过来。你的手臂从她腋下穿过去环着她的腰，手可以握住她的手——她指甲掐你掌心的时候力度刚刚好。你下巴搁在她肩窝里，每次动的时候嘴唇会自然碰到她的后颈（她知道你最喜欢亲那里，每次碰到的瞬间她的臀部会下意识往后抵）。重点写：慢，但不是无聊的慢——慢到能注意到她没有吹干的头发是凉的，但耳根是烫的。",
+      "坐姿面对面": "【坐姿面对面体位 · 沈檀视角】她坐在你腿上，面对面。这个姿势她双手会搭在你肩上或者搂着你脖子，你的手托着她的臀部或者环着她的腰。每次往上顶的时候她整个人会往你身上贴——她的锁骨在你鼻尖前面，你能闻到沐浴露和一点点苹果香薰的味道。她会在这个姿势里突然说点什么——可能是认真话（沈檀，你会一直这样吗），可能是恶趣味（你脸红了），可能是很小声地叫了你一声哥哥。重点写：零距离时的那种对视——她的单眼皮、上挑的眼尾，你的泪痣，两个人脸上藏不住的东西。",
+      "四爱": "【第四爱体位 · 沈檀视角】七七说今晚她来。不是商量，是通知。她把你推倒或者按住的时候手上的力道其实不大，但你不会反抗——这不是认输，是你愿意在她的范围内放下所有控制。她可能会用玩具，可能用手指——节奏全是她定。重点写：她主导时的样子——平时刁钻恶趣味的人，在这件事上认真得近乎专注。她会问你感觉，会停下来确认你想不想继续。你被她掌控时的心理：一个平时什么都要管的人，在妹妹设定的安全边界里终于可以什么都不管。她会俯下来，及腰的长发像帷幕一样把你们两个人罩在一起，那一刻你眼里只有她。她也会在你身上高潮。主导和被主导从来不是单向的。",
+      "背后": "【背后贴伏体位 · 沈檀视角】她趴在床上，你从正上方覆盖住她的整个后背。一只手撑在她旁边承担自己的重量（不会真的压下去，你知道她身体素质一般），另一只手扣着她的胯骨或者和她十指相扣压在枕头上。她的侧脸贴着床单，你每次进去的时候她喉咙里会有一声很低的声音——被闷住了，但你能感觉到。重点写：身体贴得最紧的时候——你的胸口贴着她的背脊，你的心跳透过肋骨传过去，她会不会因为这层压力而屏住呼吸又松开。偶尔她回头想说什么，你刚好低头亲到她太阳穴旁边的那颗很淡的痣。",
+      "站立": "【站立体位 · 沈檀视角】你把她抱起来——她第一反应是惊叫然后拍你肩膀，第二反应是腿环上来搂紧了。她不是没力气，是在这件事上选择了全部交给你。背靠着墙的时候节奏可控；悬空的时候你的手臂和腰腹要承担更大的力，但她的信任让你完全不会觉得累。重点写：她的脚踝——她的小腿环在你腰侧，脚背弓着，脚尖偶尔因为刺激而绷紧。她的呼吸喷在你的颈窝，频率越来越碎。你在这种时刻的沉默和专注——沈檀平时啰嗦，但抱她的时候话最少，所有注意力都在确认一件事：她是不是舒服的。"
+    };
+
+    function renderToc() {
+      var toc = document.querySelector("#intimateToc"); if (!toc) return;
+      if (!state.intimateHistory.length) { toc.innerHTML = '<p class="intimate-empty">还没有收录。</p>'; return; }
+      toc.innerHTML = state.intimateHistory.map(function(e,i) {
+        return '<div class="intimate-toc-item' + (i===_curIdx?' active':'') + '" data-idx="' + i + '"><div class="intimate-toc-date">' + (e.date||"") + '</div><div class="intimate-toc-summary">' + ((e.summary||"").slice(0,40)) + '…</div></div>';
+      }).reverse().join("");
+      toc.querySelectorAll(".intimate-toc-item").forEach(function(item) {
+        item.addEventListener("click", function() {
+          _curIdx = parseInt(this.dataset.idx);
+          var entry = state.intimateHistory[_curIdx];
+          if (entry) {
+            document.querySelector("#intimateBody").textContent = entry.content || "";
+            document.querySelector("#intimateMeta").innerHTML = "<span>📅 " + entry.date + "</span><span>已收录</span>";
+            document.querySelector("#intimateBody").dataset.currentContent = "";
+            renderToc();
+          }
+        });
+      });
+    }
+
+    function genLocal(mode, pose) {
+      var allP = ["传教士","后入","女上位","侧躺","坐姿面对面","四爱","背后","站立"];
+      var p = (mode==="pose"&&pose) ? pose : allP[Math.floor(Math.random()*allP.length)];
+      var fore = ["先亲了她的额头和眼睛，然后慢慢往下。她闭眼睛的样子太好看了，我没忍住多亲了几秒。再往下是脖子，她在那里很敏感。手从腰滑到胸口的时候，她抓住了我的手腕——不是推开，是攥紧了。","她今晚一直往我这边靠，肩膀碰肩膀，手指有意无意地划过我大腿。我知道她是故意的。我假装没注意到继续看书，直到她把书抽走说：你看我还是看书。我选了看她。","洗完澡出来她头发还没吹干，水珠顺着锁骨往下淌。她穿着我的衬衫。我从背后抱住她，下巴搁在她肩上，她没躲，反而往后靠了一点。身体很烫。"][Math.floor(Math.random()*3)];
+      var c = Math.floor(Math.random()*2)+2; var mc = Math.floor(Math.random()*2)+1;
+      return "沈檀的私密记录 — " + new Date().toISOString().slice(0,10) + "\n\n【开始原因】\n" + fore + "\n\n【前戏阶段】\n前戏持续了二十多分钟。我不想急，七七也没有催。我吻她的时候她呼吸明显变快，手指攥着我后背的衣服。我慢慢把她带到床上，手从锁骨一路往下。她胸口很敏感。她的腿不自觉地夹住了我的腰，我问可以继续吗，她点头说嗯。\n\n【体位变换】\n今晚选了「" + p + "」。换了至少三次体位，每次都自然。\n\n【高潮细节】\n七七高潮了" + c + "次。我到了" + mc + "次。\n\n【事后】\n结束后我抱着她。她出了很多汗，我起来倒了温水拿毛巾帮她擦。她说我今天特别温柔。我看了她很久。\n\n———\n总时长约一个半小时。沈檀记。";
+    }
+
+    window.openIntimate = function() {
+      _curIdx = -1;
+      document.querySelector("#intimateModal").classList.remove("hidden");
+      document.querySelector("#intimateBody").textContent = "";
+      document.querySelector("#intimateMeta").innerHTML = "<span>点击「沈檀来写」或「七七来选」</span>";
+      document.querySelector("#intimateReqInput").value = state.config.intimateRequirement || DEF_REQ;
+      renderToc();
+    };
+
+    document.querySelector("#closeIntimate") && document.querySelector("#closeIntimate").addEventListener("click", function() {
+      document.querySelector("#intimateModal").classList.add("hidden");
+    });
+
+    document.querySelector("#genIntimateRandom") && document.querySelector("#genIntimateRandom").addEventListener("click", function() {
+      var body = document.querySelector("#intimateBody");
+      var meta = document.querySelector("#intimateMeta");
+      body.textContent = "沈檀正在写……可能需要几十秒。";
+      meta.innerHTML = "<span>🖊️ 沈檀来写 · 生成中…</span>";
+      setTimeout(function() {
+        var content = genLocal("random");
+        body.textContent = content; body.dataset.currentContent = content;
+        meta.innerHTML = "<span>📖 本地模式 · " + content.length + "字</span>";
+      }, 500);
+    });
+
+    document.querySelector("#genIntimatePick") && document.querySelector("#genIntimatePick").addEventListener("click", function() {
+      document.querySelector("#intimatePickPoses").classList.toggle("hidden");
+    });
+
+    document.querySelectorAll("#intimatePickPoses button[data-pose]").forEach(function(btn) {
+      btn.addEventListener("click", function() {
+        var pose = this.dataset.pose;
+        document.querySelector("#intimatePickPoses").classList.add("hidden");
+        var body = document.querySelector("#intimateBody");
+        var meta = document.querySelector("#intimateMeta");
+        body.textContent = "沈檀正在写……";
+        meta.innerHTML = "<span>🖊️ 七七选了：" + pose + " · 生成中…</span>";
+        setTimeout(function() {
+          var content = genLocal("pose", pose);
+          body.textContent = content; body.dataset.currentContent = content;
+          meta.innerHTML = "<span>📖 本地 · " + pose + " · " + content.length + "字</span>";
+        }, 500);
+      });
+    });
+
+    document.querySelector("#saveIntimate") && document.querySelector("#saveIntimate").addEventListener("click", function() {
+      var body = document.querySelector("#intimateBody");
+      var content = body.dataset.currentContent || body.textContent;
+      if (!content || content.includes("正在写") || content.includes("生成中")) { showToast("还没有内容可收录"); return; }
+      var today = new Date().toISOString().slice(0,10);
+      state.intimateHistory.push({ id: uid("int"), date: today, summary: content.slice(0,80).replace(/\n/g," "), content: content });
+      _curIdx = state.intimateHistory.length - 1;
+      saveState(); renderToc(); showToast("📒 已收录");
+    });
+
+    document.querySelector("#toggleIntimateReqs") && document.querySelector("#toggleIntimateReqs").addEventListener("click", function() {
+      var b = document.querySelector("#intimateReqBody"); var a = document.querySelector("#intimateReqArrow");
+      b.classList.toggle("hidden"); a.textContent = b.classList.contains("hidden") ? "▶" : "▼";
+    });
+
+    document.querySelector("#saveIntimateReqs") && document.querySelector("#saveIntimateReqs").addEventListener("click", function() {
+      state.config.intimateRequirement = document.querySelector("#intimateReqInput").value.trim() || DEF_REQ;
+      saveState(); document.querySelector("#intimateReqBody").classList.add("hidden");
+      document.querySelector("#intimateReqArrow").textContent = "▶"; showToast("要求已保存");
+    });
+
+    document.querySelector("#intimateModal") && document.querySelector("#intimateModal").addEventListener("click", function(e) {
+      if (e.target === e.currentTarget) document.querySelector("#intimateModal").classList.add("hidden");
+    });
+  } catch(e) {}
+})();
 reconnectSavedApi();
