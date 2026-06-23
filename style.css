@@ -497,6 +497,7 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
 .tb-label { font-size: 9px; color: #c47a8a; font-weight: 700; }
 .touch-btn:hover { border-color: rgba(232,115,158,0.5); transform: scale(1.06); background: #fff0f5; }
 .touch-btn:active { transform: scale(0.94); background: #ffe0eb; }
+.touch-btn { -webkit-tap-highlight-color: transparent; }
 /* 咪咪色彩阶段 */
 .nip-btn { transition: background 0.5s, border-color 0.5s; }
 .nip-0 { background: #FFD6E0; border-color: rgba(255,182,193,0.5); }
@@ -1254,10 +1255,22 @@ button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-
   .form-grid .wide { grid-column: auto; }
   .modal-backdrop { padding: 8px; }
   .modal { border-radius: 8px; }
+  /* 手机端新模块适配 */
+  .wallbreak-panel, .touch-panel { grid-column: 1 / -1; }
+  .wallbreak-text { max-height: 140px; font-size: 11px; }
+  .touch-grid { gap: 4px; }
+  .touch-btn { border-radius: 6px; }
+  .tb-icon { font-size: 17px; }
+  .tb-label { font-size: 8px; }
+  .touch-meters-row { gap: 6px; font-size: 10px; }
+  .touch-meter b { font-size: 12px; }
 }
 
 @media (max-width: 400px) {
   .topbar h1 { font-size: 15px; }
   .profile-rail, .home-column { padding-left: 12px; padding-right: 12px; }
   .welcome-strip h2 { font-size: 19px; }
+  .tb-icon { font-size: 15px; }
+  .tb-label { font-size: 7px; }
+  .touch-grid { gap: 3px; }
 }
