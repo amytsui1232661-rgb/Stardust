@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#6f8fcf" />
     <meta name="description" content="沈檀与沈星尘的共同生活记录。" />
     <link rel="manifest" href="./manifest.json" />
-    <link rel="stylesheet" href="./style.css?v=20260623-library-progress" />
+    <link rel="stylesheet" href="./style.css?v=20260627-wardrobe" />
     <title>沈檀给北北的小家</title>
   </head>
   <body>
@@ -136,6 +136,61 @@
             <p class="thought" id="statusThought">她不回也没关系。嗯……还是看一眼手机吧。</p>
           </section>
 
+          <section class="panel wardrobe-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="eyebrow">WARDROBE</span>
+                <h2 class="editable-module-title" data-title-key="wardrobe">沈檀的衣柜</h2>
+              </div>
+              <div class="heading-actions">
+                <button class="mini-button requirement-button" type="button" data-requirement="wardrobe" title="修改衣柜要求">要求</button>
+                <button class="mini-button" id="refreshWardrobe" type="button" title="换一批衣服">↻</button>
+              </div>
+            </div>
+            <div class="wardrobe-list" id="wardrobeList" aria-live="polite"></div>
+            <button class="wardrobe-today" id="viewTodayOutfit" type="button">查看今日穿搭</button>
+            <div class="today-outfit hidden" id="todayOutfit">
+              <span>今日穿搭</span>
+              <strong id="todayOutfitText">还没被你看到</strong>
+              <small id="todayOutfitDetail"></small>
+            </div>
+            <div class="wardrobe-control hidden" id="outfitReviewBlock">
+              <label for="outfitReview">你怎么评价</label>
+              <div class="wardrobe-choice-row">
+                <select id="outfitReview">
+                  <option value="很适合你">很适合你</option>
+                  <option value="今天很帅">今天很帅</option>
+                  <option value="太规矩了，换一件">太规矩了</option>
+                  <option value="领口再松一点">领口松一点</option>
+                  <option value="想看你穿得更随意">更随意一点</option>
+                  <option value="这套只许在家穿">只许在家穿</option>
+                </select>
+                <button id="submitOutfitReview" type="button">告诉他</button>
+              </div>
+            </div>
+            <div class="wardrobe-control">
+              <label for="outfitRecommendation">给沈檀推荐</label>
+              <div class="wardrobe-choice-row">
+                <select id="outfitRecommendation">
+                  <option value="白衬衫配深色西裤">白衬衫 + 深色西裤</option>
+                  <option value="灰蓝针织衫配黑色长裤">灰蓝针织衫 + 黑色长裤</option>
+                  <option value="黑色高领配长风衣">黑色高领 + 长风衣</option>
+                  <option value="宽松卫衣配家居裤">宽松卫衣 + 家居裤</option>
+                  <option value="炭灰休闲西装配白色内搭">休闲西装 + 白色内搭</option>
+                  <option value="深蓝牛仔外套配白色棉衫">牛仔外套 + 白色棉衫</option>
+                  <option value="运动背心配墨蓝长裤">运动背心 + 墨蓝长裤</option>
+                  <option value="奶白针织开衫配浅灰长裤">奶白开衫 + 浅灰长裤</option>
+                  <option value="半扎长发配丝质衬衫">半扎长发 + 丝质衬衫</option>
+                  <option value="黑色真丝睡袍，腰带松系">黑色真丝睡袍</option>
+                  <option value="微透黑衬衫，领口解开两颗">微透黑衬衫</option>
+                  <option value="让沈檀自己选一套">让他自己选</option>
+                </select>
+                <button id="recommendOutfit" type="button">推荐</button>
+              </div>
+            </div>
+            <p class="wardrobe-reply" id="wardrobeReply">衣柜门还关着。你一碰，他就会知道。</p>
+          </section>
+
           <!-- 破壁对白 -->
           <section class="panel wallbreak-panel">
             <div class="panel-heading">
@@ -247,7 +302,7 @@
 
           <section class="room-panel">
             <div class="room-image" id="roomImageFrame">
-              <img id="roomImage" alt="当前房间场景" />
+              <img id="roomImage" src="./assets/images/rooms/living.png" alt="当前房间场景" loading="eager" />
               <span class="room-time-badge" id="roomTimeBadge">夜晚</span>
             </div>
             <div class="room-content">
@@ -277,6 +332,27 @@
               </div>
             </div>
             <div class="feed-list scroll-box" id="cameraLog"></div>
+          </section>
+
+          <!-- 记忆总结 -->
+          <section class="module-section memory-section">
+            <div class="section-heading">
+              <div><span class="eyebrow">MEMORY</span><h2>📝 记忆总结</h2></div>
+              <div class="heading-actions memory-word-actions">
+                <button class="mini-button" id="importMemoryWord" type="button" title="导入本站导出的 Word 记忆">导入 Word</button>
+                <button class="mini-button" id="exportMemoryWord" type="button" title="导出全部记忆总结">导出 Word</button>
+                <input class="hidden" id="memoryWordFile" type="file" accept=".doc,.html,.htm,.txt,application/msword,text/html,text/plain" />
+              </div>
+            </div>
+            <div class="memory-controls">
+              <input type="number" id="memFromFloor" min="1" placeholder="从" title="起始楼层" />
+              <span>–</span>
+              <input type="number" id="memToFloor" min="1" placeholder="到" title="结束楼层" />
+              <button id="genMemory" type="button">总结</button>
+            </div>
+            <div class="memory-list scroll-box" id="memoryList">
+              <p class="memory-empty">选择楼层范围，点击总结。</p>
+            </div>
           </section>
 
         </section>
@@ -379,6 +455,7 @@
               <label class="wide">聊天回复要求<textarea name="chatRequirement" rows="6"></textarea></label>
               <label class="wide">角色状态要求<textarea name="statusRequirement" rows="6"></textarea></label>
               <label class="wide">生理状态要求<textarea name="physiologyRequirement" rows="6"></textarea></label>
+              <label class="wide">衣柜与穿搭要求<textarea name="wardrobeRequirement" rows="6"></textarea></label>
               <label class="wide">房间互动要求<textarea name="roomsRequirement" rows="6"></textarea></label>
               <label class="wide">世界摄像机要求<textarea name="cameraRequirement" rows="6"></textarea></label>
               <label class="wide">纸条与惊喜要求<textarea name="surpriseRequirement" rows="6"></textarea></label>
@@ -499,6 +576,7 @@
           <div class="intimate-modes">
             <button id="genIntimateRandom" type="button">🎲 沈檀来写</button>
             <button id="genIntimatePick" type="button">📋 七七来选</button>
+            <button id="genIntimateChat" type="button">💬 色色聊天</button>
             <div class="intimate-pick-poses hidden" id="intimatePickPoses">
               <span class="pose-label">选一个姿势：</span>
               <button data-pose="传教士">传教士</button>
@@ -510,6 +588,14 @@
               <button data-pose="背后">背后</button>
               <button data-pose="站立">站立</button>
             </div>
+            <div class="intimate-chat-box hidden" id="intimateChatBox">
+              <textarea id="intimateChatInput" rows="3" placeholder="写你的场景、念头……比如：今晚在书房，他从背后抱住我……"></textarea>
+              <div class="intimate-chat-req">
+                <button class="text-button" id="toggleChatReq" type="button">⚙ 聊天要求 <span id="chatReqArrow">▶</span></button>
+                <textarea id="intimateChatReq" rows="3" class="hidden"></textarea>
+              </div>
+              <button id="genIntimateChatGo" type="button">🖊️ 生成</button>
+            </div>
           </div>
           <footer class="intimate-footer">
             <button id="saveIntimate" type="button">💾 收录此篇</button>
@@ -519,7 +605,7 @@
     </div>
 
     <div class="toast" id="toast" role="status"></div>
-    <script src="./script.js?v=20260623-library-progress"></script>
+    <script src="./script.js?v=20260627-wardrobe"></script>
     <script>
       if ("serviceWorker" in navigator) {
         caches.keys().then(function(keys) { keys.forEach(function(key) { caches.delete(key); }); });

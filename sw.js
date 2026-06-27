@@ -1,4 +1,4 @@
-const CACHE_NAME = "beibei-home-v16-library-progress";
+const CACHE_NAME = "beibei-home-v21-wardrobe";
 const FILES = [
   "./",
   "./index.html",
