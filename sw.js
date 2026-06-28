@@ -1,17 +1,10 @@
-const CACHE_NAME = "beibei-home-v21-wardrobe";
+const CACHE_NAME = "beibei-home-v22-clean-images";
 const FILES = [
   "./",
   "./index.html",
   "./style.css",
   "./script.js",
-  "./manifest.json",
-  "./assets/images/identity-still-life.png",
-  "./assets/images/rooms/living.png",
-  "./assets/images/rooms/kitchen.png",
-  "./assets/images/rooms/study.png",
-  "./assets/images/rooms/bedroom.png",
-  "./assets/images/rooms/balcony.png",
-  "./assets/images/rooms/camera.png"
+  "./manifest.json"
 ];
 
 self.addEventListener("install", (event) => {
@@ -46,6 +39,6 @@ self.addEventListener("fetch", (event) => {
         }
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => caches.match(event.request, { ignoreSearch: true }))
   );
 });

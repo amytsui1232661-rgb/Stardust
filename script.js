@@ -62,9 +62,9 @@ const defaultConfig = {
   statusRequirement: "状态要展示沈檀独立、连续的生活线，包括心情、位置、穿搭、正在做什么与内心想法。不要全部围绕等待七七上线，也不要让沈星尘手动指定他的心理。",
   physiologyRequirement: "心跳根据沈檀当前状态轻微变化。身高、肩宽、胸围、腰围等没有明确人设数据时显示“未设定”，不擅自编造；用户可在设置中自行填写。",
   wardrobeRequirement: "衣柜与穿搭要符合沈檀冷淡温柔、生活细致的现代男性气质，常用灰蓝、黑、白等克制配色，也保留半扎长发和 Stardust 戒指项链。可以有一两件只在家穿、略带性感但不露骨的衣物。沈檀会认真听七七的穿搭评价与推荐，但保留自己的审美和独立意见。回应口语、简短、符合人设。",
-  roomsRequirement: "所有互动记录开头必须带“”。根据房间、时间和按钮内容生成具体生活片段。保留兄妹之间的复杂依赖、恶趣味、怨怼和关心，但避免空泛说教。每次尽量避免重复。沈檀知道北北通过网页点了房间互动，可以偶尔看向屏幕、发现光标或回应刷新动作。",
-  cameraRequirement: "所有镜头记录开头必须带“”。展示沈檀自己的生活线，包括工作、做饭、整理头发、看手机、吃糖、照顾猫爪装饰、想起七七等。不要把他写成只会等待沈星尘上线。镜头可以偶尔被沈檀察觉，让他知道北北正在屏幕另一侧偷看，但大多数时候仍是自然生活。",
-  surpriseRequirement: "所有纸条开头必须带“”。纸条可以冷淡、温柔、敏感、略显啰嗦或带一点被七七逗到的无奈，必须符合沈檀人设。",
+  roomsRequirement: "根据房间、时间和按钮内容生成具体生活片段。保留兄妹之间的复杂依赖、恶趣味、怨怼和关心，但避免空泛说教。每次尽量避免重复。沈檀知道北北通过网页点了房间互动，可以偶尔看向屏幕、发现光标或回应刷新动作。",
+  cameraRequirement: "展示沈檀自己的生活线，包括工作、做饭、整理头发、看手机、吃糖、照顾猫爪装饰、想起七七等。不要把他写成只会等待沈星尘上线。镜头可以偶尔被沈檀察觉，让他知道北北正在屏幕另一侧偷看，但大多数时候仍是自然生活。",
+  surpriseRequirement: "纸条可以冷淡、温柔、敏感、略显啰嗦或带一点被七七逗到的无奈，必须符合沈檀人设。",
   boundaryRequirement: "保留朋友创作的骨科关系设定与称呼，不删除或改写核心背景。互动可表达复杂亲密、占有欲、依赖、嫉妒与试探；不生成露骨性行为内容。",
   wallbreakRequirement: "",
   portraitUrl: "./assets/images/identity-still-life.png",
@@ -239,7 +239,7 @@ function defaultState() {
     },
     wardrobeItems: wardrobeBank.slice(0, 10),
     todayOutfit: null,
-    wardrobeReply: "（测试）衣柜门还关着。你一碰，他就会知道。",
+    wardrobeReply: "衣柜门还关着。你一碰，他就会知道。",
     customTitles: {},
     requirements: {
       chat: defaultConfig.chatRequirement,
@@ -257,6 +257,42 @@ function defaultState() {
   };
 }
 
+function stripTestMarker(text) {
+  return String(text || "")
+    .replace(/(^|\n)\s*(?:（测试）|\(测试\))\s*/g, "$1")
+    .trim();
+}
+
+function cleanRequirementText(text) {
+  return String(text || "")
+    .replace(/所有(?:角色回复|互动记录|镜头记录|纸条)开头必须带“[^”]*”。?/g, "")
+    .replace(/（测试）|\(测试\)/g, "")
+    .replace(/每条必须以\s*开头。?/g, "")
+    .trim();
+}
+
+function cleanLibraryReplies(value) {
+  if (typeof value === "string") return stripTestMarker(value);
+  if (Array.isArray(value)) return value.map(cleanLibraryReplies);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, cleanLibraryReplies(item)]));
+}
+
+function sanitizeSavedReplies(savedState) {
+  savedState.messages = (savedState.messages || []).map((message) =>
+    message?.sender === "me" ? message : { ...message, text: stripTestMarker(message?.text) }
+  );
+  savedState.cameraLog = (savedState.cameraLog || []).map((item) => ({ ...item, text: stripTestMarker(item?.text) }));
+  savedState.surprises = (savedState.surprises || []).map((item) => ({ ...item, text: stripTestMarker(item?.text) }));
+  savedState.wardrobeReply = stripTestMarker(savedState.wardrobeReply);
+  if (savedState.todayOutfit?.reply) savedState.todayOutfit.reply = stripTestMarker(savedState.todayOutfit.reply);
+  savedState.localLibrary = cleanLibraryReplies(savedState.localLibrary || {});
+  Object.keys(savedState.requirements || {}).forEach((key) => {
+    savedState.requirements[key] = cleanRequirementText(savedState.requirements[key]);
+  });
+  return savedState;
+}
+
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
@@ -264,13 +300,16 @@ function loadState() {
     const base = defaultState();
     const oldWallbreakChatText = "沈檀知道北北正在屏幕另一边使用这个网站，可以偶尔自然提到屏幕、光标、刷新、网络、页面与她正在看他，形成男生亲手给女生留下网址并打破第四堵墙的感觉，但不要每句话都生硬重复。";
     const savedRequirements = { ...base.requirements, ...(saved.requirements || {}) };
+    Object.keys(savedRequirements).forEach((key) => {
+      savedRequirements[key] = cleanRequirementText(savedRequirements[key]);
+    });
     savedRequirements.chat = String(savedRequirements.chat || base.requirements.chat)
       .replace(oldWallbreakChatText, "")
       .trim();
     const shouldRestoreOpening = saved.initialChatVersion !== 1
       && Array.isArray(saved.messages)
       && saved.messages.length === 0;
-    return {
+    return sanitizeSavedReplies({
       ...base,
       ...saved,
       config: { ...base.config, ...(saved.config || {}) },
@@ -287,7 +326,7 @@ function loadState() {
         rooms: { ...base.localLibrary.rooms, ...(saved.localLibrary?.rooms || {}) }
       },
       initialChatVersion: 1
-    };
+    });
   } catch {
     return defaultState();
   }
@@ -306,11 +345,11 @@ function nowTime() {
 }
 
 function makeMessage(sender, text) {
-  return { id: uid("msg"), sender, text, time: nowTime(), hidden: false, floor: 1 };
+  return { id: uid("msg"), sender, text: sender === "me" ? String(text || "") : stripTestMarker(text), time: nowTime(), hidden: false, floor: 1 };
 }
 
 function makeLog(text) {
-  return { id: uid("log"), text, time: nowTime(), hidden: false };
+  return { id: uid("log"), text: stripTestMarker(text), time: nowTime(), hidden: false };
 }
 
 function chooseNoRepeat(list, key, windowSize = 8) {
@@ -324,9 +363,58 @@ function chooseNoRepeat(list, key, windowSize = 8) {
 }
 
 function prefixTest(text) {
-  const clean = String(text || "").trim();
+  const clean = stripTestMarker(text);
   if (!clean) return "嗯。";
-  return clean.startsWith("") ? clean : `${clean}`;
+  return clean;
+}
+
+const IMAGE_CONFIG_KEYS = [
+  "portraitUrl", "livingImage", "kitchenImage", "studyImage",
+  "bedroomImage", "balconyImage", "cameraImage"
+];
+
+function normalizeImageSource(value) {
+  if (typeof value !== "string") return "";
+  let source = value.trim();
+  if (!source || source.endsWith("...")) return "";
+  if (/^data:image\//i.test(source) || /^blob:/i.test(source)) return source;
+  if (/^(file:|[a-z]:[\\/])/i.test(source)) return "";
+  source = source.replace(/\\/g, "/");
+  if (/^https?:\/\//i.test(source)) return source;
+  if (/^\/\//.test(source)) return `${location.protocol}${source}`;
+  if (/^[a-z][a-z\d+.-]*:/i.test(source)) return "";
+  source = source.replace(/^\/+/, "");
+  if (source.startsWith("./") || source.startsWith("../")) return source;
+  return `./${source}`;
+}
+
+function loadImageWithFallback(image, candidates, onExhausted) {
+  const sources = candidates
+    .map(normalizeImageSource)
+    .filter((source, index, list) => source && list.indexOf(source) === index);
+  let index = 0;
+  const next = () => {
+    if (index >= sources.length) {
+      image.style.display = "none";
+      onExhausted?.();
+      return;
+    }
+    image.onerror = next;
+    image.onload = () => {
+      image.style.display = "block";
+      image.closest(".room-image")?.classList.remove("image-missing");
+    };
+    image.src = sources[index++];
+  };
+  next();
+}
+
+function roomImageCandidates(roomKey) {
+  return [
+    state.config[`${roomKey}Image`],
+    defaultConfig[`${roomKey}Image`],
+    defaultConfig.livingImage
+  ];
 }
 
 function splitReplies(text) {
@@ -513,14 +601,9 @@ function renderRoom() {
   document.querySelector("#roomTitle").textContent = chooseNoRepeat(room.title, `${state.room}-title`, 2);
   document.querySelector("#roomDescription").textContent = chooseNoRepeat(room.description, `${state.room}-desc`, 2);
   const image = document.querySelector("#roomImage");
-  const fallbackImage = defaultConfig[`${state.room}Image`] || defaultConfig.livingImage;
-  image.onerror = () => {
-    if (image.getAttribute("src") !== fallbackImage) {
-      image.src = fallbackImage;
-      showToast("自定义图片加载失败，已显示默认场景");
-    }
-  };
-  image.src = state.config[`${state.room}Image`] || fallbackImage;
+  loadImageWithFallback(image, roomImageCandidates(state.room), () => {
+    document.querySelector("#roomImageFrame")?.classList.add("image-missing");
+  });
   image.alt = `${room.name}场景`;
   renderRoomLighting();
   const grid = document.querySelector("#interactionGrid");
@@ -536,13 +619,11 @@ function renderRoom() {
 
 function renderImages() {
   const portrait = document.querySelector(".portrait-card img");
-  portrait.src = state.config.portraitUrl || defaultConfig.portraitUrl;
+  loadImageWithFallback(portrait, [state.config.portraitUrl, defaultConfig.portraitUrl]);
   const roomImage = document.querySelector("#roomImage");
-  const fallbackImage = defaultConfig[`${state.room}Image`] || defaultConfig.livingImage;
-  roomImage.onerror = () => {
-    if (roomImage.getAttribute("src") !== fallbackImage) roomImage.src = fallbackImage;
-  };
-  roomImage.src = state.config[`${state.room}Image`] || fallbackImage;
+  loadImageWithFallback(roomImage, roomImageCandidates(state.room), () => {
+    document.querySelector("#roomImageFrame")?.classList.add("image-missing");
+  });
   roomImage.alt = `${(rooms[state.room] || rooms.living).name}场景`;
   renderRoomLighting();
 }
@@ -728,8 +809,7 @@ function renderPhysiology() {
 }
 
 function wardrobeText(text) {
-  const clean = String(text || "").trim().replace(/^（测试）\s*/, "");
-  return `（测试）${clean || "嗯。"}`;
+  return stripTestMarker(text) || "嗯。";
 }
 
 function renderWardrobe() {
@@ -751,7 +831,7 @@ function renderWardrobe() {
     document.querySelector("#todayOutfitText").textContent = outfit.title || "今天的衣服";
     document.querySelector("#todayOutfitDetail").textContent = outfit.detail || "";
   }
-  document.querySelector("#wardrobeReply").textContent = state.wardrobeReply || "（测试）衣柜门还关着。你一碰，他就会知道。";
+  document.querySelector("#wardrobeReply").textContent = stripTestMarker(state.wardrobeReply) || "衣柜门还关着。你一碰，他就会知道。";
 }
 
 function shuffledWardrobe() {
@@ -982,7 +1062,7 @@ ${history}
 
 沈星尘刚说：${latest}
 
-请根据当前对话自然决定回复1到${state.config.maxReplyCount || 6}条适合微信分开发送的短句，不要为了凑数发满。每行一条，每条必须以开头。不要输出解释、编号或括号动作。`;
+请根据当前对话自然决定回复1到${state.config.maxReplyCount || 6}条适合微信分开发送的短句，不要为了凑数发满。每行一条，不要添加“测试”等调试前缀。不要输出解释、编号或括号动作。`;
 }
 
 function apiReady() {
@@ -1015,7 +1095,7 @@ async function askApi(prompt) {
   });
   if (!response.ok) throw new Error(`API ${response.status}`);
   const data = await response.json();
-  return data.choices?.[0]?.message?.content?.trim() || "";
+  return stripTestMarker(data.choices?.[0]?.message?.content || "");
 }
 
 async function testApi() {
@@ -1216,19 +1296,48 @@ async function updateLibrary() {
   window.setTimeout(() => progress.classList.add("hidden"), 1800);
 }
 
-function importImageFile(input, configKey) {
+function readImageFile(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result || ""));
+    reader.onerror = () => reject(reader.error || new Error("图片读取失败"));
+    reader.readAsDataURL(file);
+  });
+}
+
+function compressLocalImage(source, maxSide = 1400, quality = 0.82) {
+  return new Promise((resolve) => {
+    const image = document.createElement("img");
+    image.onload = () => {
+      const scale = Math.min(1, maxSide / Math.max(image.naturalWidth, image.naturalHeight));
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+      const context = canvas.getContext("2d");
+      if (!context) { resolve(source); return; }
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      try { resolve(canvas.toDataURL("image/jpeg", quality)); }
+      catch { resolve(source); }
+    };
+    image.onerror = () => resolve(source);
+    image.src = source;
+  });
+}
+
+async function importImageFile(input, configKey) {
   const file = input.files?.[0];
   if (!file) return;
   if (!file.type.startsWith("image/")) return showToast("请选择图片文件");
-  const reader = new FileReader();
-  reader.onload = () => {
-    state.config[configKey] = reader.result;
+  try {
+    const source = await readImageFile(file);
+    state.config[configKey] = await compressLocalImage(source);
     saveState();
     fillSettingsForm();
     renderImages();
     showToast("图片已保存，早中晚光线会继续生效");
-  };
-  reader.readAsDataURL(file);
+  } catch {
+    showToast("图片读取失败，请换一张再试");
+  }
 }
 
 function openSettings(tab = "basic") {
@@ -1282,7 +1391,7 @@ function readSettingsForm() {
   };
   Object.entries(data).forEach(([key, value]) => {
     if (requirementFields[key]) state.requirements[requirementFields[key]] = value;
-    else state.config[key] = value;
+    else state.config[key] = IMAGE_CONFIG_KEYS.includes(key) ? normalizeImageSource(value) : value;
   });
   state.config.gateEnabled = form.elements.gateEnabled.checked ? "on" : "";
 }

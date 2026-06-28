@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#6f8fcf" />
     <meta name="description" content="沈檀与沈星尘的共同生活记录。" />
     <link rel="manifest" href="./manifest.json" />
-    <link rel="stylesheet" href="./style.css?v=20260627-wardrobe" />
+    <link rel="stylesheet" href="./style.css?v=20260628-clean-images-v22" />
     <title>沈檀给北北的小家</title>
   </head>
   <body>
@@ -605,12 +605,14 @@
     </div>
 
     <div class="toast" id="toast" role="status"></div>
-    <script src="./script.js?v=20260627-wardrobe"></script>
+    <script src="./script.js?v=20260628-clean-images-v22"></script>
     <script>
       if ("serviceWorker" in navigator) {
-        caches.keys().then(function(keys) { keys.forEach(function(key) { caches.delete(key); }); });
-        navigator.serviceWorker.getRegistrations().then(function(regs) {
-          regs.forEach(function(reg) { reg.unregister(); });
+        window.addEventListener("load", function() {
+          navigator.serviceWorker
+            .register("./sw.js?v=20260628-clean-images-v22", { updateViaCache: "none" })
+            .then(function(registration) { return registration.update(); })
+            .catch(function() { /* 在线页面仍可正常使用 */ });
         });
       }
     </script>
